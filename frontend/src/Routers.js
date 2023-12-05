@@ -7,8 +7,8 @@ export const Routers = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Main />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/home" element={<Main />} />
             </Routes>
         </Router>
     );
