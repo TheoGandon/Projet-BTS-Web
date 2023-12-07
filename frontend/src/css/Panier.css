@@ -1,0 +1,79 @@
+/* Main.css */
+
+
+  
+  section {
+    margin-bottom: 30px;
+    margin: 2%;
+  }
+  
+  .cart-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .cart-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .cart-items img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .cart-summary {
+    width: 30%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  .cart-summary h3 {
+    margin-bottom: 10px;
+  }
+  
+  .favorite-shoes {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .favorite-shoes img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+
+  .suggestions {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+  }
+  
+  .suggestions img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .cart-container {
+      flex-direction: column;
+    }
+  
+    .cart-summary {
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+  
