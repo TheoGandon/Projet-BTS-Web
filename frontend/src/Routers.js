@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Main from './Main';
 import Login from './Login'
 import Panier from './Panier'
+import Produit from './Produit'
 
 export const Routers = () => {
     return (
@@ -11,6 +12,7 @@ export const Routers = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/home" element={<Main />} />
                 <Route path="/panier" element={<Panier />} />
+                <Route path="/produit" element={<Produit />} />
             </Routes>
         </Router>
     );

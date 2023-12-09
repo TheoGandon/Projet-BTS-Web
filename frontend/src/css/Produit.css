@@ -1,0 +1,87 @@
+.shoe-product-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 5%;
+  }
+  
+  .shoe-images {
+    position: relative;
+    margin: auto;
+  }
+  
+  .main-image {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .color-options {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+  }
+  
+  .color-option {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .color-option.selected {
+    border: 2px solid #333;
+  }
+  
+  .shoe-details {
+    padding: 0 20px;
+  }
+  
+  .selections {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+    
+  }
+  
+  .size-selection {
+    width: 50%;
+  }
+  
+  .size-selection select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  
+  .size-selection button {
+    width: 30%;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 2%;
+  }
+  
+  .color-selection {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  label {
+    margin-right: 10px;
+  }
+  
+  .product-details {
+    text-align: left;
+  }
+  
+button {
+    background-color: #D9D9D9D9;
+}
