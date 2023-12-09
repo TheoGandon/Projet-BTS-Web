@@ -1,8 +1,10 @@
 import React from 'react';
 import Navbar from './component/Navbar';
 import Footer from './component/Footer';
+import Slider from './component/Slider';
 import { motion } from 'framer-motion';
 import './css/Panier.css'
+
 
 const Panier = () => {
   const cartItems = [
@@ -11,14 +13,11 @@ const Panier = () => {
   ];
 
   const favoriteShoes = [
-    { id: 1, name: 'Favorite Shoe 1', image: 'shoe1.jpg' },
-    { id: 2, name: 'Favorite Shoe 2', image: 'shoe2.jpg' },
+    { id: 1, name: 'Favorite Shoe 1', image: {Dunk} }
   ];
 
-  const suggestions = [
-    { id: 1, name: 'Suggestion 1', image: 'suggestion1.jpg' },
-    { id: 2, name: 'Suggestion 2', image: 'suggestion2.jpg' },
-  ];
+  
+
 
   return (
     <div>
@@ -69,17 +68,10 @@ const Panier = () => {
 
         <section>
           <h2>Suggestions</h2>
-          <div className="suggestions">
-            {suggestions.map((suggestion) => (
-              <div key={suggestion.id}>
-                <img src={suggestion.image} alt={suggestion.name} />
-                <p>{suggestion.name}</p>
-              </div>
-            ))}
-          </div>
+          
         </section>
       </motion.div>
-
+      <Slider />
       <Footer />
     </div>
   );

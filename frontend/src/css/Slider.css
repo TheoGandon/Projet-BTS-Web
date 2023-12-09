@@ -1,0 +1,10 @@
+.Slider {
+    border: 1px solid #ddd;
+    width: 300px;
+    margin: 5%;
+    padding: 20px 0 20px 20px;
+}
+
+.Slider img {
+    width: 90%;
+}
