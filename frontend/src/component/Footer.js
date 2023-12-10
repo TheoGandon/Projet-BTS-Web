@@ -41,7 +41,7 @@ const Footer = () => {
     >
       <motion.div variants={item} style={{flex: 1}} className="footer-content">
         <img src={Logo} alt="Logo" style={{ maxWidth: '30%', height: 'auto' }} />
-        <p>Address : rue Alfonse Colas</p>
+        <p>Address : 2 rue Aphonse Colas</p>
         <p>E-mail : pepsi.bde@gmail.com</p>
         <p>Phone : +33 3 56 78 61 10</p>
       </motion.div>
