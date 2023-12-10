@@ -4,7 +4,7 @@ import { MdOutlineFavorite } from "react-icons/md";
 import { CiShoppingCart } from "react-icons/ci";
 import Logo from "../Asset/SneakHubLogo.PNG";
 import "../css/Navbar.css";
-import "../css/App.css";
+import "../css/App.css"; 
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -34,7 +34,7 @@ const Navbar = () => {
       </a>
       <div className="link-nav">
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-        <a href="/">Home</a>
+        <a href="/accueil">Home</a>
         </motion.div>
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
         <a href="/product">Product</a>

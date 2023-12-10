@@ -1,0 +1,156 @@
+body{
+
+        justify-content: center;
+        align-items: center;
+}
+
+.maine{ 
+    width: 90%;
+    margin: 2% 5% 0 5%;
+    display: inline-flex;
+}
+
+/****************************************************************/
+/****************************NEW ARRIVAGE ***********************/
+/****************************************************************/
+
+.arrival{
+    height: 567px;
+    width:80%;
+    background-color: aquamarine;
+}
+
+
+.arrival h1{
+    font-size: 47px;
+}
+
+.arrival p{
+    font-size: 20px;
+    margin: 4% 0 4% 0;
+}
+
+.arrival-text{
+    width: 70%;
+    padding: 20% 0 0 15%;
+}
+
+/****************************************************************/
+/****************************MARQUES ****************************/
+/****************************************************************/
+
+.brand { 
+    width: 60%;
+    margin-left: 1%;
+    display: grid;
+    max-width: 800px;
+    grid-template-columns:1fr 1fr;
+}
+
+.nike{ 
+    margin-right: 4%;
+    height: 279px;
+    text-align: center;
+    background-color: bisque;
+}
+
+h1{
+    color: #ffffff;
+    font-size: 25px;
+}
+
+.maine p{
+    color: #ffffff;
+}
+
+.nike-text{
+    width: 80%;
+    padding: 22% 0 0 22%;
+}
+
+.nike button{
+    margin-top: 5%;
+}
+
+/****************************************************************/
+/***************************PRODUCT CARD*************************/
+/****************************************************************/
+
+.product{
+    margin: 5%;
+    margin-bottom: 0;
+}
+
+.product-container{
+    text-align: center;
+    align-items: center;
+    display: inline-flex;
+    width: max-content;
+}
+
+.product-card{
+    margin-right: 3%;
+    text-align: center;
+    width: 40%;
+    height: 324px;
+}
+
+.product-card img{
+    width: 100%;
+    margin-bottom: 30%;
+    object-fit: cover;
+}
+
+.card-container{
+    display: grid;
+    padding-top: 2%;
+    text-align: left;
+    height: 29%;
+    background-color: rgba(206, 206, 206, 0.292);
+}
+
+.card-container p{
+    margin-top: 4%;
+}
+
+.rating{
+    margin-top: 2%;
+}
+
+.panier{
+    margin-left: 57%;
+}
+
+@media screen and (max-width: 768px) {
+    .product-card {
+        width: 45%; /* Ajuste la largeur des cartes pour tenir sur l'écran */
+        margin-right: 0; /* Supprime la marge à droite pour éviter les décalages */
+        margin-bottom: 5%; /* Ajoute un espace entre les cartes */
+    }
+
+    .product-container {
+        justify-content: center; /* Centre les cartes sur l'écran */
+    }
+
+    .panier {
+        margin-left: 0; /* Ajuste la position du contenu du panier */
+        text-align: center; /* Centre le contenu du panier */
+        margin-top: 5px; /* Ajoute un espace entre le contenu du panier et les cartes */
+    }
+
+    .nike {
+        display: flex;
+    }
+}
+
+/* Pour les écrans encore plus petits, comme les téléphones */
+@media screen and (max-width: 480px) {
+    .product-card {
+        width: 100%; /* Fait en sorte que les cartes occupent toute la largeur */
+        margin-bottom: 5%; /* Ajoute un espace entre les cartes */
+    }
+
+    .panier {
+        margin-top: 10px; /* Augmente l'espace au-dessus du contenu du panier */
+    }
+}
