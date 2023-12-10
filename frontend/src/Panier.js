@@ -1,24 +1,24 @@
 import React from 'react';
 import Navbar from './component/Navbar';
 import Footer from './component/Footer';
+import Slider from './component/Slider';
 import { motion } from 'framer-motion';
 import './css/Panier.css'
+import Dunk from './Asset/dunk.PNG'
+
 
 const Panier = () => {
   const cartItems = [
-    { id: 1, name: 'Product 1', price: 10, image: 'product1.jpg' },
-    { id: 2, name: 'Product 2', price: 20, image: 'product2.jpg' },
+    { id: 1, name: 'Product 1', price: 10, image: Dunk },
+    { id: 2, name: 'Product 2', price: 20, image: Dunk },
   ];
 
   const favoriteShoes = [
-    { id: 1, name: 'Favorite Shoe 1', image: 'shoe1.jpg' },
-    { id: 2, name: 'Favorite Shoe 2', image: 'shoe2.jpg' },
+    { id: 1, name: 'Favorite Shoe 1', image: Dunk }
   ];
 
-  const suggestions = [
-    { id: 1, name: 'Suggestion 1', image: 'suggestion1.jpg' },
-    { id: 2, name: 'Suggestion 2', image: 'suggestion2.jpg' },
-  ];
+  
+
 
   return (
     <div>
@@ -30,7 +30,7 @@ const Panier = () => {
         transition={{ type: 'spring', duration: 1 }}
       >
         <section>
-          <h2>Votre Panier</h2>
+          <h2>Panier</h2>
           <div className="cart-container">
             <div className="cart-items">
               {cartItems.map((item) => (
@@ -56,7 +56,7 @@ const Panier = () => {
         </section>
 
         <section>
-          <h2>Vos Chaussures Préférées</h2>
+          <h2>Favoris</h2>
           <div className="favorite-shoes">
             {favoriteShoes.map((shoe) => (
               <div key={shoe.id}>
@@ -69,17 +69,10 @@ const Panier = () => {
 
         <section>
           <h2>Suggestions</h2>
-          <div className="suggestions">
-            {suggestions.map((suggestion) => (
-              <div key={suggestion.id}>
-                <img src={suggestion.image} alt={suggestion.name} />
-                <p>{suggestion.name}</p>
-              </div>
-            ))}
-          </div>
+          
         </section>
       </motion.div>
-
+      <Slider />
       <Footer />
     </div>
   );

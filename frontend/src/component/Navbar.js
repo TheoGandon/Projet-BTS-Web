@@ -37,7 +37,7 @@ const Navbar = () => {
         <a href="/accueil">Home</a>
         </motion.div>
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-        <a href="/product">Product</a>
+        <a href="/produit">Product</a>
         </motion.div>
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
         <a href="/Pricing">Pricing</a>
@@ -47,8 +47,8 @@ const Navbar = () => {
         </motion.div>
       </div>
       <input className="find-bar" type="search" placeholder="Search"/>
-      <MdOutlineFavorite className="logo-nav"size={35}/>
-      <CiShoppingCart className="logo-nav" size={35}/>
+      <a href="/favorit"><MdOutlineFavorite className="logo-nav"size={35}/></a>
+      <a href="/panier"><CiShoppingCart className="logo-nav" size={35}/></a>
     </motion.nav>
   );
 };

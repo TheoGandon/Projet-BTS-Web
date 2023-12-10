@@ -44,7 +44,9 @@ function Login() {
             <input type="password" placeholder="Password" />
           </motion.div>
           <motion.button className="login-button" whileHover={{ scale: 1.05 }} variants={item}>
+            <a href="/home">
             Log in
+            </a>
           </motion.button>
         </motion.div>
       </motion.div>
