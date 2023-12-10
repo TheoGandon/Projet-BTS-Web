@@ -4,6 +4,9 @@ import Main from './Main';
 import Login from './Login'
 import Panier from './Panier'
 import Produit from './Produit'
+import Favoris from './Favoris'
+import Navigation from './Navigation'
+import Commande from './Commande';
 
 export const Routers = () => {
     return (
@@ -12,7 +15,10 @@ export const Routers = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/home" element={<Main />} />
                 <Route path="/panier" element={<Panier />} />
-                <Route path="/produit" element={<Produit />} />
+                <Route path="/produit'1" element={<Produit />} />
+                <Route path="/favorit" element={<Favoris />} />
+                <Route path="/navigation" element={<Navigation />} />
+                <Route path="/commande" element={<Commande />} />
             </Routes>
         </Router>
     );

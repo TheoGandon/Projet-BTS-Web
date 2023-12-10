@@ -9,11 +9,11 @@ import Dunk from './Asset/dunk.PNG';
 
 const Produit = () => {
   const [selectedColor, setSelectedColor] = useState('red');
-  const [selectedSize, setSelectedSize] = useState('7');
+  const [selectedSize, setSelectedSize] = useState('1');
   const [selectedImage, setSelectedImage] = useState(Dunk);
 
   const shoeColors = ['red', 'blue', 'green'];
-  const shoeSizes = ['38', '38', '38', '38', '38', '38', '38', '38', '38', '38', '38', '38'];
+  const shoeSizes = ['38', '38', '38', '38', '38', '38', '38', '38', '38', '38'];
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
@@ -25,12 +25,10 @@ const Produit = () => {
   };
 
   const handleAddToCart = () => {
-    // Implement logic to add the selected product to the cart
     console.log('Product added to cart:', selectedColor, selectedSize);
   };
 
   const handleAddToFavorites = () => {
-    // Implement logic to add the selected product to favorites
     console.log('Product added to favorites:', selectedColor, selectedSize);
   };
 
@@ -64,7 +62,7 @@ const Produit = () => {
 
         <div className="shoe-details">
           <div className="selections">
-            <label htmlFor="size">Size:</label>
+            <label htmlFor="size"></label>
             <div className="size-selection">
               {shoeSizes.map((size) => (
                 <motion.button
@@ -96,10 +94,10 @@ const Produit = () => {
 
           <div className="product-details">
             <h2>Shoe Name</h2>
-            <p>Description of the shoe goes here.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
             <div className="action-buttons">
-              <button onClick={handleAddToCart}>Add to Cart</button>
-              <button onClick={handleAddToFavorites}>Add to Favorites</button>
+              <button className='actionB' onClick={handleAddToCart}>Add to Cart</button>
+              <button className='actionB' onClick={handleAddToFavorites}>Add to Favorites</button>
             </div>
           </div>
         </div>
