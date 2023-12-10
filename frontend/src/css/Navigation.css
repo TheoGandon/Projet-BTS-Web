@@ -40,13 +40,6 @@
   height: 100%;
 }
 
-.label-top-left,
-.label-bottom-left,
-.label-top-right,
-.label-bottom-right {
-  color: black;
-  text-align: center;
-}
 
 .label-top-left,
 .label-bottom-left {
@@ -61,4 +54,14 @@
 .overlay-text span {
   font-size: 20px;
   cursor: pointer;
+}
+
+.label-bottom-left {
+  margin-top: 70%;
+}
+
+.label-top-right {
+  color: black;
+  align-items: center;
+  display: contents;
 }

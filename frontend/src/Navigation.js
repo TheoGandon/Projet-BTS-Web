@@ -4,7 +4,7 @@ import Footer from './component/Footer';
 import './css/Navigation.css';
 
 const handleButtonClick = (index) => {
-  const redirectionLink = `./src/Produit'${index + 1}`;
+  const redirectionLink = `/produit'${index + 1}`;
   
   window.location.href = redirectionLink;
 };
@@ -37,8 +37,8 @@ const Navigation = () => {
         />
         <div className="overlay-text">
           <div className="label-top-left">{`Article ${articleNumber}`}</div>
-          <div className="label-top-right">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <div className="label-bottom-left">{`${price}`}</div>
+          <div className="label-top-right">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <div className="label-bottom-right">
             <span style={{ color: 'red' }}>&#10084;</span> <span style={{ color: 'black' }}>&#128722;</span>
           </div>

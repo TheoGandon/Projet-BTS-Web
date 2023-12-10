@@ -36,7 +36,7 @@ const Produit = () => {
     <div>
       <Navbar />
       <div className="shoe-product-container">
-        <div className="shoe-images heading-frame">
+        <div className="shoe-images">
           <motion.img
             src={selectedImage}
             alt={`Shoe in ${selectedColor}`}
@@ -94,10 +94,10 @@ const Produit = () => {
 
           <div className="product-details">
             <h2>Shoe Name</h2>
-            <p>Description of the shoe goes here.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
             <div className="action-buttons">
-              <button onClick={handleAddToCart}>Add to Cart</button>
-              <button onClick={handleAddToFavorites}>Add to Favorites</button>
+              <button className='actionB' onClick={handleAddToCart}>Add to Cart</button>
+              <button className='actionB' onClick={handleAddToFavorites}>Add to Favorites</button>
             </div>
           </div>
         </div>
