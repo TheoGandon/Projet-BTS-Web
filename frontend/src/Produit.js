@@ -9,11 +9,11 @@ import Dunk from './Asset/dunk.PNG';
 
 const Produit = () => {
   const [selectedColor, setSelectedColor] = useState('red');
-  const [selectedSize, setSelectedSize] = useState('7');
+  const [selectedSize, setSelectedSize] = useState('1');
   const [selectedImage, setSelectedImage] = useState(Dunk);
 
   const shoeColors = ['red', 'blue', 'green'];
-  const shoeSizes = ['38', '38', '38', '38', '38', '38', '38', '38', '38', '38', '38', '38'];
+  const shoeSizes = ['38', '38', '38', '38', '38', '38', '38', '38', '38', '38'];
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
@@ -25,12 +25,10 @@ const Produit = () => {
   };
 
   const handleAddToCart = () => {
-    // Implement logic to add the selected product to the cart
     console.log('Product added to cart:', selectedColor, selectedSize);
   };
 
   const handleAddToFavorites = () => {
-    // Implement logic to add the selected product to favorites
     console.log('Product added to favorites:', selectedColor, selectedSize);
   };
 
@@ -38,7 +36,7 @@ const Produit = () => {
     <div>
       <Navbar />
       <div className="shoe-product-container">
-        <div className="shoe-images">
+        <div className="shoe-images heading-frame">
           <motion.img
             src={selectedImage}
             alt={`Shoe in ${selectedColor}`}
@@ -64,7 +62,7 @@ const Produit = () => {
 
         <div className="shoe-details">
           <div className="selections">
-            <label htmlFor="size">Size:</label>
+            <label htmlFor="size"></label>
             <div className="size-selection">
               {shoeSizes.map((size) => (
                 <motion.button

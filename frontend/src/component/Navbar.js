@@ -47,7 +47,7 @@ const Navbar = () => {
         </motion.div>
       </div>
       <input className="find-bar" type="search" placeholder="Search"/>
-      <MdOutlineFavorite className="logo-nav"size={35}/>
+      <a href="/favorit"><MdOutlineFavorite className="logo-nav"size={35}/></a>
       <a href="/panier"><CiShoppingCart className="logo-nav" size={35}/></a>
     </motion.nav>
   );
