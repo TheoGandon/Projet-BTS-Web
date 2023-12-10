@@ -1,0 +1,12 @@
+
+.footer-content a {
+    padding: 2%;
+    font-size: 15px;
+    display: flex;
+    
+}
+
+a {
+    text-decoration: none;
+    color: #FFFFFF;
+}
