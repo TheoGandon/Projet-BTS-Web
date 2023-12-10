@@ -56,12 +56,12 @@ class Articles
         return $this->id;
     }
 
-    public function getArticlTitle(): ?string
+    public function getArticleTitle(): ?string
     {
         return $this->article_title;
     }
 
-    public function setArticlTitle(string $article_title): static
+    public function setArticleTitle(string $article_title): static
     {
         $this->article_title = $article_title;
 
