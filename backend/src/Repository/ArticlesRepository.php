@@ -21,6 +21,37 @@ class ArticlesRepository extends ServiceEntityRepository
         parent::__construct($registry, Articles::class);
     }
 
+    public function getArticlePictures($article_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('articleId', $article_id)
+            ->select('articlePicture.picture_link')
+            ->distinct(true)
+            ->from('App\Entity\articlePicture', 'articlePicture')
+            ->join('articlePicture.article_id', 'article')
+            ->where('article.id= :articleId')
+
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getArticleColors($article_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('articleId', $article_id)
+            ->select('color.id')
+            ->distinct(true)
+            ->from('App\Entity\Color', 'color')
+            ->join('color.articlePictures', 'article_picture')
+            ->join('article_picture.article_id', 'article')
+            ->where('article.id= :articleId')
+
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Articles[] Returns an array of Articles objects
 //     */

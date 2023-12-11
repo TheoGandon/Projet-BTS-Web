@@ -26,10 +26,8 @@ class GetProductsController extends AbstractController
             $description = $article->getArticleDescription();
             $selling_price = $article->getArticleSellingPrice();
             $selling_price_promo = $article->getArticleSellingPricePromotion();
-            $pictures_objects = $articlePictureRepository->findBy(["article_id"=>$id], );
-            $pictures = array_map(function($picture) {
-                return $picture->getPictureLink();
-            }, $pictures_objects);
+            $pictures = $articlesRepository->getArticlePictures($id);
+            $colors = $articlesRepository->getArticleColors($id);
 
             $data[] = [
                 'id' => $id,
@@ -37,7 +35,8 @@ class GetProductsController extends AbstractController
                 'description' => $description,
                 'selling_price' => $selling_price,
                 'selling_price_promo' => $selling_price_promo,
-                'pictures' => $pictures
+                'pictures' => $pictures,
+                'colors' => $colors
             ];
         }
 
@@ -61,6 +60,7 @@ class GetProductsController extends AbstractController
             $pictures = array_map(function($picture) {
                 return $picture->getPictureLink();
             }, $pictures_objects);
+            $colors = $article->getArticleColors($id);
 
             $data[] = [
                 'id' => $id,
@@ -68,7 +68,8 @@ class GetProductsController extends AbstractController
                 'description' => $description,
                 'selling_price' => $selling_price,
                 'selling_price_promo' => $selling_price_promo,
-                'pictures' => $pictures
+                'pictures' => $pictures,
+                'colors' => $colors
             ];
         }
 

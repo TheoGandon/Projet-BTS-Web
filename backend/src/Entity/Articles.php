@@ -192,33 +192,6 @@ class Articles
         return $this;
     }
 
-    /**
-     * @return Collection<int, Color>
-     */
-    public function getColorId(): Collection
-    {
-        return $this->color_id;
-    }
 
-    public function addColorId(Color $colorId): static
-    {
-        if (!$this->color_id->contains($colorId)) {
-            $this->color_id->add($colorId);
-            $colorId->setArrayArticles($this);
-        }
 
-        return $this;
-    }
-
-    public function removeColorId(Color $colorId): static
-    {
-        if ($this->color_id->removeElement($colorId)) {
-            // set the owning side to null (unless already changed)
-            if ($colorId->getArrayArticles() === $this) {
-                $colorId->setArrayArticles(null);
-            }
-        }
-
-        return $this;
-    }
 }

@@ -20,9 +20,9 @@ class ArticlePicture
     #[ORM\JoinColumn(nullable: false)]
     private ?Articles $article_id = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'articlePictures')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Color $color_id = null;
+    private ?color $color = null;
 
     public function getId(): ?int
     {
@@ -53,15 +53,16 @@ class ArticlePicture
         return $this;
     }
 
-    public function getColorId(): ?Color
+    public function getColor(): ?color
     {
-        return $this->color_id;
+        return $this->color;
     }
 
-    public function setColorId(?Color $color_id): static
+    public function setColor(?color $color): static
     {
-        $this->color_id = $color_id;
+        $this->color = $color;
 
         return $this;
     }
+
 }
