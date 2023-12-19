@@ -23,34 +23,76 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function getArticlePictures($article_id): array
     {
-        return $this->createQueryBuilder('a')
+        return $this->createQueryBuilder("a")
             ->setParameter('articleId', $article_id)
             ->select('articlePicture.picture_link')
-            ->distinct(true)
-            ->from('App\Entity\articlePicture', 'articlePicture')
-            ->join('articlePicture.article_id', 'article')
+            ->distinct()
+            ->from('App\Entity\ArticlePicture', 'articlePicture')
+            ->join('articlePicture.article', 'article')
             ->where('article.id= :articleId')
-
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
+    }
+
+    public function getAvailableArticleSizes($article_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('articleId', $article_id)
+            ->select('size.id, size.size_label')
+            ->distinct(true)
+            ->from('App\Entity\Stock', 'stock')
+            ->join('stock.size', 'size')
+            ->join('stock.articles', 'article')
+            ->where('article.id= :articleId and stock.amount > 0')
+            ->getQuery()
+            ->getResult();
     }
 
     public function getArticleColors($article_id): array
     {
         return $this->createQueryBuilder('a')
             ->setParameter('articleId', $article_id)
-            ->select('color.id')
+            ->select('color.id, color.color_label')
             ->distinct(true)
             ->from('App\Entity\Color', 'color')
             ->join('color.articlePictures', 'article_picture')
-            ->join('article_picture.article_id', 'article')
+            ->join('article_picture.article', 'article')
             ->where('article.id= :articleId')
 
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
+
+    public function findArticlesByColor($color_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('colorId', $color_id)
+            ->select('article.id, article.article_title, article.article_description, article.selling_price')
+            ->distinct(true)
+            ->from('App\Entity\Article', 'article')
+            ->join('article.articlePictures', 'article_pictures')
+            ->join('article_pictures.color', 'color')
+            ->where('color.id= :colorId')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findArticlesBySize($size_id):array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('size_id', $size_id)
+            ->select('articles.id, articles.article_title, articles.selling_price')
+            ->distinct(true)
+            ->from('App\Entity\Sizes', 'size')
+            ->join('size.stocks', 'stocks')
+            ->join('stocks.articles', 'articles')
+            ->where('size.id= :size_id and stocks.amount > 0')
+            ->getQuery()
+            ->getResult();
+
+    }
+
+
 
 //    /**
 //     * @return Article[] Returns an array of Article objects

@@ -35,22 +35,23 @@ class Article
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
     private ?string $selling_price_promo = null;
 
-    #[ORM\ManyToMany(targetEntity: articlePicture::class, inversedBy: 'articles')]
-    private Collection $pictures;
-
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'articles')]
     private Collection $orders;
 
     #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'cart_articles')]
     private Collection $clients_cart;
 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticlePicture::class)]
+    private Collection $articlePictures;
+
+
 
     public function __construct()
     {
         $this->stock = new ArrayCollection();
-        $this->pictures = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->clients_cart = new ArrayCollection();
+        $this->articlePictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,30 +144,6 @@ class Article
     }
 
     /**
-     * @return Collection<int, articlePicture>
-     */
-    public function getPictures(): Collection
-    {
-        return $this->pictures;
-    }
-
-    public function addPicture(articlePicture $picture): static
-    {
-        if (!$this->pictures->contains($picture)) {
-            $this->pictures->add($picture);
-        }
-
-        return $this;
-    }
-
-    public function removePicture(articlePicture $picture): static
-    {
-        $this->pictures->removeElement($picture);
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Order>
      */
     public function getOrders(): Collection
@@ -210,6 +187,36 @@ class Article
     public function removeClientsCart(Client $clientsCart): static
     {
         $this->clients_cart->removeElement($clientsCart);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticlePicture>
+     */
+    public function getArticlePictures(): Collection
+    {
+        return $this->articlePictures;
+    }
+
+    public function addArticlePicture(ArticlePicture $articlePicture): static
+    {
+        if (!$this->articlePictures->contains($articlePicture)) {
+            $this->articlePictures->add($articlePicture);
+            $articlePicture->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticlePicture(ArticlePicture $articlePicture): static
+    {
+        if ($this->articlePictures->removeElement($articlePicture)) {
+            // set the owning side to null (unless already changed)
+            if ($articlePicture->getArticle() === $this) {
+                $articlePicture->setArticle(null);
+            }
+        }
 
         return $this;
     }

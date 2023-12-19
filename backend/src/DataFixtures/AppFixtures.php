@@ -3,10 +3,11 @@
 namespace App\DataFixtures;
 
 use App\Entity\ArticlePicture;
-use App\Entity\Articles;
+use App\Entity\Article;
 use App\Entity\Category;
 use App\Entity\Color;
 use App\Entity\Sizes;
+use App\Entity\Stock;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -31,12 +32,12 @@ class AppFixtures extends Fixture
         $articles=[];
 
         for ($i = 0; $i < 10 ; $i++) {
-            $articles[$i] = new Articles();
+            $articles[$i] = new Article();
             $articles[$i]->setArticleTitle($faker->text(15));
             $articles[$i]->setArticleDescription($faker->paragraph(3));
-            $articles[$i]->setArticleSellingPrice($faker->randomFloat(2,10, 500));
-            $articles[$i]->setArticleSellingPricePromotion(0);
-            $articles[$i]->setCategoryId($categories[1]);
+            $articles[$i]->setSellingPrice($faker->randomFloat(2,10, 500));
+            $articles[$i]->setSellingPricePromo(0);
+            $articles[$i]->setCategory($categories[1]);
 
             $manager->persist($articles[$i]);
         }
@@ -61,8 +62,8 @@ class AppFixtures extends Fixture
         for($i=0; $i<10; $i++){
             $pictures[$j] = new ArticlePicture();
             $pictures[$j]->setPictureLink("https://picsum.photos/".rand(1000, 2000).'/'.rand(2000, 1000).'/');
-            $pictures[$j]->setColorId($colors[rand(0, 2)]);
-            $pictures[$j]->setArticleId($articles[$i]);
+            $pictures[$j]->setColor($colors[rand(0, 2)]);
+            $pictures[$j]->setArticle($articles[$i]);
 
             $manager->persist($pictures[$j]);
 
@@ -70,8 +71,8 @@ class AppFixtures extends Fixture
 
             $pictures[$j] = new ArticlePicture();
             $pictures[$j]->setPictureLink("https://picsum.photos/".rand(1000, 2000).'/'.rand(2000, 1000).'/');
-            $pictures[$j]->setColorId($colors[rand(0, 2)]);
-            $pictures[$j]->setArticleId($articles[$i]);
+            $pictures[$j]->setColor($colors[rand(0, 2)]);
+            $pictures[$j]->setArticle($articles[$i]);
 
             $manager->persist($pictures[$j]);
 
@@ -83,9 +84,23 @@ class AppFixtures extends Fixture
         for($i=0; $i<5; $i++){
             $sizes[$i] = new Sizes();
             $sizes[$i]->setSizeLabel($faker->word);
-            $sizes[$i]->addArticleId($articles[rand(0,9)]);
 
             $manager->persist($sizes[$i]);
+        }
+
+        $stock = [];
+        $h=0;
+
+        for($i=0; $i<10;$i++){
+            for($j=0; $j<5; $j++){
+                $stock[$h] = new Stock();
+                $stock[$h]->addArticle($articles[$i]);
+                $stock[$h]->setSize($sizes[$j]);
+                $stock[$h]->setAmount(random_int(0, 3));
+
+                $manager->persist($stock[$h]);
+                $h++;
+            }
         }
 
 

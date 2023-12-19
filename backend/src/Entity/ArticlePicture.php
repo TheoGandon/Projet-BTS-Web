@@ -21,10 +21,10 @@ class ArticlePicture
 
     #[ORM\ManyToOne(inversedBy: 'articlePictures')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?color $color = null;
+    private ?Color $color = null;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'pictures')]
-    private Collection $articles;
+    #[ORM\ManyToOne(inversedBy: 'articlePictures')]
+    private ?Article $article = null;
 
     public function __construct()
     {
@@ -60,31 +60,17 @@ class ArticlePicture
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
+    public function getArticle(): ?Article
     {
-        return $this->articles;
+        return $this->article;
     }
 
-    public function addArticle(Article $article): static
+    public function setArticle(?Article $article): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->addPicture($this);
-        }
+        $this->article = $article;
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
-    {
-        if ($this->articles->removeElement($article)) {
-            $article->removePicture($this);
-        }
-
-        return $this;
-    }
 
 }
