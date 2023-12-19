@@ -26,6 +26,7 @@ class GetProductsController extends AbstractController
             $pictures = $articleRepository->getArticlePictures($id);
             $colors = $articleRepository->getArticleColors($id);
             $sizes = $articleRepository->getAvailableArticleSizes($id);
+            $category = $articleRepository->getArticleCategory($id);
 
             $data[] = [
                 'id' => $id,
@@ -33,7 +34,8 @@ class GetProductsController extends AbstractController
                 'selling_price' => $selling_price,
                 'pictures' => $pictures,
                 'colors' => $colors,
-                'available_sizes'=> $sizes
+                'available_sizes'=> $sizes,
+                'category'=>$category
             ];
         }
 
@@ -88,6 +90,38 @@ class GetProductsController extends AbstractController
                 'pictures' => $pictures,
                 'colors' => $colors,
                 'available_sizes' => $sizes
+            ];
+        }
+
+
+
+        return new JsonResponse($data);
+    }
+
+    #[Route('/api/get/articles/by/category/{category_id}', name: 'app_get_products_by_category')]
+    public function getArticleByCategory(string $category_id, ArticleRepository $articleRepository): Response
+    {
+        $articles = $articleRepository->findArticlesByCategory($category_id);
+
+        $data = [];
+
+        foreach ($articles as $article) {
+            $id = $article["id"];
+            $title = $article["article_title"];
+            $selling_price = $article["selling_price"];
+            $pictures = $articleRepository->getArticlePictures($id);
+            $colors = $articleRepository->getArticleColors($id);
+            $sizes = $articleRepository->getAvailableArticleSizes($id);
+            $category = $articleRepository->getArticleCategory($id);
+
+            $data[] = [
+                'id' => $id,
+                'title' => $title,
+                'selling_price' => $selling_price,
+                'pictures' => $pictures,
+                'colors' => $colors,
+                'available_sizes' => $sizes,
+                'category'=>$category
             ];
         }
 

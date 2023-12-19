@@ -62,6 +62,19 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function getArticleCategory($article_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('articleId', $article_id)
+            ->select('category.id, category.category_name')
+            ->distinct(true)
+            ->from('App\Entity\Article', 'article')
+            ->join('article.category', 'category')
+            ->where('article.id= :articleId')
+
+            ->getQuery()
+            ->getResult();
+    }
 
     public function findArticlesByColor($color_id): array
     {
@@ -87,6 +100,20 @@ class ArticleRepository extends ServiceEntityRepository
             ->join('size.stocks', 'stocks')
             ->join('stocks.articles', 'articles')
             ->where('size.id= :size_id and stocks.amount > 0')
+            ->getQuery()
+            ->getResult();
+
+    }
+
+    public function findArticlesByCategory($category_id):array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('category_id', $category_id)
+            ->select('article.id, article.article_title, article.selling_price')
+            ->distinct(true)
+            ->from('App\Entity\Article', 'article')
+            ->join('article.category', 'category')
+            ->where('category.id= :category_id')
             ->getQuery()
             ->getResult();
 
