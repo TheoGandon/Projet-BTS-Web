@@ -35,7 +35,7 @@ class GetProductsController extends AbstractController
                 'pictures' => $pictures,
                 'colors' => $colors,
                 'available_sizes'=> $sizes,
-                'category'=>$category
+                'category'=> $category
             ];
         }
 
@@ -55,13 +55,15 @@ class GetProductsController extends AbstractController
             $selling_price = $article["selling_price"];
             $pictures = $articleRepository->getArticlePictures($id);
             $colors = $articleRepository->getArticleColors($id);
+            $category = $articleRepository->getArticleCategory($id);
 
             $data[] = [
                 'id' => $id,
                 'title' => $title,
                 'selling_price' => $selling_price,
                 'pictures' => $pictures,
-                'colors' => $colors
+                'colors' => $colors,
+                'category'=> $category
             ];
         }
 
@@ -82,6 +84,7 @@ class GetProductsController extends AbstractController
             $pictures = $articleRepository->getArticlePictures($id);
             $colors = $articleRepository->getArticleColors($id);
             $sizes = $articleRepository->getAvailableArticleSizes($id);
+            $category = $articleRepository->getArticleCategory($id);
 
             $data[] = [
                 'id' => $id,
@@ -89,7 +92,8 @@ class GetProductsController extends AbstractController
                 'selling_price' => $selling_price,
                 'pictures' => $pictures,
                 'colors' => $colors,
-                'available_sizes' => $sizes
+                'available_sizes' => $sizes,
+                'category'=> $category
             ];
         }
 
@@ -121,7 +125,7 @@ class GetProductsController extends AbstractController
                 'pictures' => $pictures,
                 'colors' => $colors,
                 'available_sizes' => $sizes,
-                'category'=>$category
+                'category'=> $category
             ];
         }
 
@@ -140,6 +144,7 @@ class GetProductsController extends AbstractController
         $pictures = $articleRepository->getArticlePictures($id);
         $color = $articleRepository->getArticleColors($id);
         $sizes = $articleRepository->getAvailableArticleSizes($id);
+        $category = $articleRepository->getArticleCategory($id);
 
 
 
@@ -150,7 +155,8 @@ class GetProductsController extends AbstractController
             'selling_price' => $selling_price,
             'pictures' => $pictures,
             'color' => $color,
-            'sizes' => $sizes
+            'sizes' => $sizes,
+            'category'=> $category
         ];
 
         return new JsonResponse($response);

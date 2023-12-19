@@ -23,7 +23,7 @@ export const Routers = () => {
                 <Route path="/favorit" element={<Favoris />} />
                 <Route path="/navigation" element={<Navigation />} />
                 <Route path="/commande" element={<Commande />} />
-                <Route path="/Accueil" element={<Accueil/>} />
+                <Route path="/accueil" element={<Accueil/>} />
                 <Route path="/contact" element={<Contact/>} />
             </Routes>
         </Router>
