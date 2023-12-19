@@ -33,14 +33,14 @@ class Client
     #[ORM\OneToMany(mappedBy: 'client_id', targetEntity: Order::class)]
     private Collection $array_orders;
 
-    #[ORM\ManyToMany(targetEntity: Articles::class)]
-    private Collection $array_cart;
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'clients_cart')]
+    private Collection $cart_articles;
 
     public function __construct()
     {
         $this->array_adresses = new ArrayCollection();
         $this->array_orders = new ArrayCollection();
-        $this->array_cart = new ArrayCollection();
+        $this->cart_articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,26 +157,30 @@ class Client
     }
 
     /**
-     * @return Collection<int, Articles>
+     * @return Collection<int, Article>
      */
-    public function getArrayCart(): Collection
+    public function getCartArticles(): Collection
     {
-        return $this->array_cart;
+        return $this->cart_articles;
     }
 
-    public function addArrayCart(Articles $arrayCart): static
+    public function addCartArticle(Article $cartArticle): static
     {
-        if (!$this->array_cart->contains($arrayCart)) {
-            $this->array_cart->add($arrayCart);
+        if (!$this->cart_articles->contains($cartArticle)) {
+            $this->cart_articles->add($cartArticle);
+            $cartArticle->addClientsCart($this);
         }
 
         return $this;
     }
 
-    public function removeArrayCart(Articles $arrayCart): static
+    public function removeCartArticle(Article $cartArticle): static
     {
-        $this->array_cart->removeElement($arrayCart);
+        if ($this->cart_articles->removeElement($cartArticle)) {
+            $cartArticle->removeClientsCart($this);
+        }
 
         return $this;
     }
+
 }

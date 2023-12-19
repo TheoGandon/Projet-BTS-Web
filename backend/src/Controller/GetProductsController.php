@@ -14,9 +14,9 @@ use function PHPUnit\Framework\isNull;
 class GetProductsController extends AbstractController
 {
     #[Route('/api/get/products', name: 'app_get_products')]
-    public function getProducts(ArticlesRepository $articlesRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
+    public function getProducts(ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
-        $articles = $articlesRepository->findAll();
+        $articles = $articleRepository->findAll();
 
         $data = [];
 
@@ -26,8 +26,8 @@ class GetProductsController extends AbstractController
             $description = $article->getArticleDescription();
             $selling_price = $article->getArticleSellingPrice();
             $selling_price_promo = $article->getArticleSellingPricePromotion();
-            $pictures = $articlesRepository->getArticlePictures($id);
-            $colors = $articlesRepository->getArticleColors($id);
+            $pictures = $articleRepository->getArticlePictures($id);
+            $colors = $articleRepository->getArticleColors($id);
 
             $data[] = [
                 'id' => $id,
@@ -44,9 +44,9 @@ class GetProductsController extends AbstractController
     }
 
     #[Route('/api/get/products/by/color/{color}', name: 'app_get_products_by_color')]
-    public function getProductsByColor(string $color, ArticlesRepository $articlesRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
+    public function getProductsByColor(string $color, ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
-        $articles = $articlesRepository->findAll();
+        $articles = $articleRepository->findAll();
 
         $data = [];
 
@@ -77,9 +77,9 @@ class GetProductsController extends AbstractController
     }
 
     #[Route('/api/get/product/{id}', name: 'app_get_single_product')]
-    public function getSingleProduct(int $id, ArticlesRepository $articlesRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
+    public function getSingleProduct(int $id, ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
-        $article = $articlesRepository->find($id);
+        $article = $articleRepository->find($id);
 
         $id = $article->getId();
         $title = $article->getArticleTitle();

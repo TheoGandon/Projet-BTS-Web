@@ -2,29 +2,28 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticlePictureRepository;
+use App\Repository\StockRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ArticlePictureRepository::class)]
-class ArticlePicture
+#[ORM\Entity(repositoryClass: StockRepository::class)]
+class Stock
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $picture_link = null;
+    #[ORM\Column]
+    private ?int $amount = null;
 
-
-    #[ORM\ManyToOne(inversedBy: 'articlePictures')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?color $color = null;
-
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'pictures')]
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'stock')]
     private Collection $articles;
+
+    #[ORM\ManyToOne(inversedBy: 'stocks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sizes $size = null;
 
     public function __construct()
     {
@@ -36,26 +35,14 @@ class ArticlePicture
         return $this->id;
     }
 
-    public function getPictureLink(): ?string
+    public function getAmount(): ?int
     {
-        return $this->picture_link;
+        return $this->amount;
     }
 
-    public function setPictureLink(string $picture_link): static
+    public function setAmount(int $amount): static
     {
-        $this->picture_link = $picture_link;
-
-        return $this;
-    }
-
-    public function getColor(): ?color
-    {
-        return $this->color;
-    }
-
-    public function setColor(?color $color): static
-    {
-        $this->color = $color;
+        $this->amount = $amount;
 
         return $this;
     }
@@ -72,7 +59,7 @@ class ArticlePicture
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);
-            $article->addPicture($this);
+            $article->addStock($this);
         }
 
         return $this;
@@ -81,10 +68,21 @@ class ArticlePicture
     public function removeArticle(Article $article): static
     {
         if ($this->articles->removeElement($article)) {
-            $article->removePicture($this);
+            $article->removeStock($this);
         }
 
         return $this;
     }
 
+    public function getSize(): ?Sizes
+    {
+        return $this->size;
+    }
+
+    public function setSize(?Sizes $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
 }

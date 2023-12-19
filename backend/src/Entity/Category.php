@@ -18,12 +18,12 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $category_name = null;
 
-    #[ORM\OneToMany(mappedBy: 'category_id', targetEntity: Articles::class)]
-    private Collection $array_articles;
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Article::class)]
+    private Collection $articles;
 
     public function __construct()
     {
-        $this->array_articles = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,30 +43,31 @@ class Category
         return $this;
     }
 
+
     /**
-     * @return Collection<int, Articles>
+     * @return Collection<int, Article>
      */
-    public function getArrayArticles(): Collection
+    public function getArticles(): Collection
     {
-        return $this->array_articles;
+        return $this->articles;
     }
 
-    public function addArrayArticle(Articles $arrayArticle): static
+    public function addArticle(Article $article): static
     {
-        if (!$this->array_articles->contains($arrayArticle)) {
-            $this->array_articles->add($arrayArticle);
-            $arrayArticle->setCategoryId($this);
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->setCategory($this);
         }
 
         return $this;
     }
 
-    public function removeArrayArticle(Articles $arrayArticle): static
+    public function removeArticle(Article $article): static
     {
-        if ($this->array_articles->removeElement($arrayArticle)) {
+        if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
-            if ($arrayArticle->getCategoryId() === $this) {
-                $arrayArticle->setCategoryId(null);
+            if ($article->getCategory() === $this) {
+                $article->setCategory(null);
             }
         }
 

@@ -30,17 +30,17 @@ class Order
     #[ORM\OneToMany(mappedBy: 'order_id', targetEntity: Payment::class)]
     private Collection $array_payments;
 
-    #[ORM\ManyToMany(targetEntity: Articles::class, inversedBy: 'array_orders')]
-    private Collection $order_content;
-
     #[ORM\OneToMany(mappedBy: 'order_id', targetEntity: Shipping::class)]
     private Collection $array_shippings;
+
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'orders')]
+    private Collection $articles;
 
     public function __construct()
     {
         $this->array_payments = new ArrayCollection();
-        $this->order_content = new ArrayCollection();
         $this->array_shippings = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,30 +115,6 @@ class Order
     }
 
     /**
-     * @return Collection<int, Articles>
-     */
-    public function getOrderContent(): Collection
-    {
-        return $this->order_content;
-    }
-
-    public function addOrderContent(Articles $orderContent): static
-    {
-        if (!$this->order_content->contains($orderContent)) {
-            $this->order_content->add($orderContent);
-        }
-
-        return $this;
-    }
-
-    public function removeOrderContent(Articles $orderContent): static
-    {
-        $this->order_content->removeElement($orderContent);
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Shipping>
      */
     public function getArrayShippings(): Collection
@@ -163,6 +139,33 @@ class Order
             if ($arrayShipping->getOrderId() === $this) {
                 $arrayShipping->setOrderId(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): static
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles->add($article);
+            $article->addOrder($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): static
+    {
+        if ($this->articles->removeElement($article)) {
+            $article->removeOrder($this);
         }
 
         return $this;
