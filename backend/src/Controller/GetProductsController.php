@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use function PHPUnit\Framework\isNull;
 
 class GetProductsController extends AbstractController
 {
@@ -106,6 +105,7 @@ class GetProductsController extends AbstractController
         $selling_price = $article->getSellingPrice();
         $pictures = $articleRepository->getArticlePictures($id);
         $color = $articleRepository->getArticleColors($id);
+        $sizes = $articleRepository->getAvailableArticleSizes($id);
 
 
 
@@ -115,7 +115,8 @@ class GetProductsController extends AbstractController
             'description' => $description,
             'selling_price' => $selling_price,
             'pictures' => $pictures,
-            'color' => $color
+            'color' => $color,
+            'sizes' => $sizes
         ];
 
         return new JsonResponse($response);
