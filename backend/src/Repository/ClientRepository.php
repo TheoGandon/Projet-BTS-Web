@@ -20,6 +20,17 @@ class ClientRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Client::class);
     }
+
+    public function findLoginClient($email): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('emailKey', $email)
+            ->select('client.id, client.client_first_name, client.client_last_name, client.client_email, client.client_password')
+            ->from('App\Entity\Client', 'client')
+            ->where('client.client_email= :emailKey')
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Client[] Returns an array of Client objects
 //     */
