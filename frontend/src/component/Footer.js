@@ -47,14 +47,14 @@ const Footer = () => {
       </motion.div>
       <motion.div variants={item} style={{ flex: 1 }} className="footer-content">
         <h3>Shopping and Categories</h3>
-        <a href="#">Men's Shopping</a>
-        <a href="#">Women's Shopping</a>
-        <a href="#">Kid's Shopping</a>
+        <a href="/navigation">Men's Shopping</a>
+        <a href="/navigationfemme">Women's Shopping</a>
+        <a href="/navigationenfant">Kid's Shopping</a>
       </motion.div>
       <motion.div variants={item} style={{ flex: 1 }} className="footer-content">
-        {/* Contenu de la troisième colonne ici */}
+        {/* Contenu de la troisiÃ¨me colonne ici */}
         <h3>Useful Links</h3>
-        <a href="#">Contact Us</a>
+        <a href="/contact">Contact Us</a>
       </motion.div>
     </motion.footer>
     <motion.div variants={item} style={{ 

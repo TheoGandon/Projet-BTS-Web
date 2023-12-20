@@ -6,6 +6,8 @@ import Panier from './Panier'
 import Produit from './Produit'
 import Favoris from './Favoris'
 import Navigation from './Navigation'
+import NavigationF from './Navigation_Femme'
+import NavigationE from './Navigation_Enfant'
 import Commande from './Commande';
 import Accueil from './Accueil';
 import Contact from './contact';
@@ -22,8 +24,10 @@ export const Routers = () => {
                 <Route path="/produit'1" element={<Produit />} />
                 <Route path="/favorit" element={<Favoris />} />
                 <Route path="/navigation" element={<Navigation />} />
+                <Route path="/navigationfemme" element={<NavigationF />} />
+                <Route path="/navigationenfant" element={<NavigationE />} />
                 <Route path="/commande" element={<Commande />} />
-                <Route path="/accueil" element={<Accueil/>} />
+                <Route path="/Accueil" element={<Accueil/>} />
                 <Route path="/contact" element={<Contact/>} />
             </Routes>
         </Router>
