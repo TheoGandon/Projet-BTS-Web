@@ -59,7 +59,58 @@ class CartController extends AbstractController
         if($method == "GET"){
             $session = $request->getSession();
             $cart = $session->get("cart");
-            return new JsonResponse($cart);
+            if(!is_null($cart)){
+                return new JsonResponse($cart);
+            } else {
+                return new JsonResponse([
+                    'status'=>500,
+                    'error'=>"Cart is empty"
+                ]);
+            }
+
+        } else {
+            return new JsonResponse([
+                'status'=>500,
+                'error'=>'Wrong method'
+            ]);
+        }
+    }
+
+    #[Route('/api/deletefromcart/{article_id}-{size_id}', name: 'app_removefromcart')]
+    public function removeFromCart(string $article_id, string $size_id, Request $request):Response
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method == "DELETE"){
+            $session = $request->getSession();
+            $cart = $session->get("cart");
+            if(!is_null($cart)){
+                $deletions = 0;
+                $i = 0;
+                foreach($cart as $cartarticle){
+                    if($cartarticle["id"] == $article_id && $cartarticle["size_id"] == $size_id){
+                        unset($cart[$i]);
+                        $deletions++;
+                    }
+                    $i++;
+                }
+                if($deletions>0){
+                    $session->set("cart", $cart);
+                    return new JsonResponse([
+                        'status'=>200,
+                        'value'=>'Item deleted successfully'
+                    ]);
+                } else {
+                    return new JsonResponse([
+                        'status'=>500,
+                        'error'=>'No item to delete'
+                    ]);
+                }
+            } else {
+                return new JsonResponse([
+                    'status' => 500,
+                    'error' => 'Cart is empty'
+                ]);
+            }
         } else {
             return new JsonResponse([
                 'status'=>500,
