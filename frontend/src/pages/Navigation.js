@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
-import './css/Navigation.css';
+import '../css/Navigation.css';
 
 const Navigation = () => {
   const [products, setProducts] = useState([]);
@@ -42,7 +40,6 @@ const Navigation = () => {
 
   return (
     <div>
-      <Navbar />
       <section className="gallery">
         <div className="gallery-header">
           <h1>Hommes</h1>
@@ -58,7 +55,6 @@ const Navigation = () => {
           <span>&#8595;</span>
         </button>
       </section>
-      <Footer />
     </div>
   );
 };

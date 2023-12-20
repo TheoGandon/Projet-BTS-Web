@@ -1,6 +1,12 @@
-import React from "react";
-import { createRoot } from "react-dom";
-import { Routers } from './Routers';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './css/index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-const root = document.getElementById("root");
-createRoot(root).render(<Routers />);
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

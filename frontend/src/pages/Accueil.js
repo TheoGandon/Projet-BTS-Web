@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './css/accueil.css';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
+import '../css/Accueil.css';
 import { motion } from 'framer-motion';
-import { Flip } from 'react-awesome-reveal';
 
 const Accueil = () => {
   const [products, setProducts] = useState([]);
@@ -17,7 +14,6 @@ const Accueil = () => {
 
   return (
     <div className='box'>
-      <Navbar />
       <motion.div
         initial={{ opacity: 0, x: '100%' }}
         animate={{ opacity: 1, x: 0 }}
@@ -49,7 +45,6 @@ const Accueil = () => {
           </div>
         </div>
       </motion.div>
-      <Footer />
     </div>
   );
 };

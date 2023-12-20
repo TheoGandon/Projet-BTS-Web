@@ -1,12 +1,9 @@
-import Navbar from './component/Navbar'
-import "./css/Commande.css"
-import Footer from './component/Footer'
-import Dunk from './Asset/dunk.PNG'
+import "../css/Commande.css"
+import Dunk from '../Asset/dunk.PNG'
 
 function Commande() {
     return(
         <div>
-            <Navbar />
             <h2 className='commande-t'>Commande</h2>
             <div className='commande'>
                 <div className='commande-d'>
@@ -21,7 +18,6 @@ function Commande() {
                 </div>
             </div>
             <img src={Dunk} className='commande-img' />
-            <Footer />
         </div>
     );
 }

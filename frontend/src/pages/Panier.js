@@ -1,10 +1,8 @@
 import React from 'react';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
-import Slider from './component/Slider';
+import Slider from '../component/Slider';
 import { motion } from 'framer-motion';
-import './css/Panier.css'
-import Dunk from './Asset/dunk.PNG'
+import '../css/Panier.css'
+import Dunk from '../Asset/dunk.PNG'
 
 
 const Panier = () => {
@@ -22,7 +20,6 @@ const Panier = () => {
 
   return (
     <div>
-      <Navbar />
       <motion.div
         initial={{ opacity: 0, x: '-100%' }}
         animate={{ opacity: 1, x: 0 }}
@@ -73,7 +70,6 @@ const Panier = () => {
         </section>
       </motion.div>
       <Slider />
-      <Footer />
     </div>
   );
 };
