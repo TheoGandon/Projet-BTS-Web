@@ -57,9 +57,9 @@ const Accueil = () => {
             <h2>{productCategory.title}</h2>
             <p>{productCategory.description}</p>
             <div className='product-container'>
-              {productCategory.products.map(product => (
+              {productCategory.products && productCategory.products.map(product => (
                 <div key={product.id} className='product-card'>
-                  <img src={product.pictures[0].picture_link} alt={product.title} />
+                  <img src={product.pictures[0]?.picture_link} alt={product.title} />
                   <div className='card-container'>
                     <h3>{product.title}</h3>
                     <p>{`€${product.selling_price}`}</p>
