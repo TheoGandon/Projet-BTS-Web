@@ -1,23 +1,39 @@
-// Produit.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import './css/Produit.css';
 import Navbar from './component/Navbar';
 import Footer from './component/Footer';
 import Slider from './component/Slider';
-import Dunk from './Asset/dunk.PNG';
 
 const Produit = () => {
-  const [selectedColor, setSelectedColor] = useState('red');
-  const [selectedSize, setSelectedSize] = useState('1');
-  const [selectedImage, setSelectedImage] = useState(Dunk);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+  const [productData, setProductData] = useState({
+    id: null,
+    title: '',
+    description: '',
+    selling_price: '',
+    pictures: [],
+    color: [],
+    sizes: [],
+  });
 
-  const shoeColors = ['red', 'blue', 'green'];
-  const shoeSizes = ['38', '38', '38', '38', '38', '38', '38', '38', '38', '38'];
+  useEffect(() => {
+    fetch('http://localhost:8080/api/get/articles/21')
+      .then(response => response.json())
+      .then(data => {
+        setProductData(data);
+        setSelectedColor(data.color.length > 0 ? data.color[0].color_label : '');
+        setSelectedSize(data.sizes.length > 0 ? data.sizes[0].size_label : '');
+        setSelectedImage(data.pictures.length > 0 ? data.pictures[0].picture_link : '');
+      })
+      .catch(error => console.error('Error fetching product data:', error));
+  }, []);
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
-    setSelectedImage(Dunk);
+    setSelectedImage(productData.pictures.find(pic => pic.color_label === color)?.picture_link || '');
   };
 
   const handleSizeChange = (size) => {
@@ -47,13 +63,13 @@ const Produit = () => {
           />
 
           <div className="color-options">
-            {shoeColors.map((color) => (
+            {productData.color.map((color) => (
               <motion.img
-                key={color}
-                src={Dunk}
-                alt={`Shoe in ${color}`}
-                className={`color-option ${selectedColor === color ? 'selected' : ''}`}
-                onClick={() => handleColorChange(color)}
+                key={color.id}
+                src={color.picture_link}
+                alt={`Shoe in ${color.color_label}`}
+                className={`color-option ${selectedColor === color.color_label ? 'selected' : ''}`}
+                onClick={() => handleColorChange(color.color_label)}
                 whileHover={{ scale: 1.1 }}
               />
             ))}
@@ -64,14 +80,14 @@ const Produit = () => {
           <div className="selections">
             <label htmlFor="size"></label>
             <div className="size-selection">
-              {shoeSizes.map((size) => (
+              {productData.sizes.map((size) => (
                 <motion.button
-                  key={size}
-                  onClick={() => handleSizeChange(size)}
-                  className={`size-button ${selectedSize === size ? 'selected' : ''}`}
+                  key={size.id}
+                  onClick={() => handleSizeChange(size.size_label)}
+                  className={`size-button ${selectedSize === size.size_label ? 'selected' : ''}`}
                   whileHover={{ scale: 1.05 }}
                 >
-                  {size}
+                  {size.size_label}
                 </motion.button>
               ))}
             </div>
@@ -83,9 +99,9 @@ const Produit = () => {
                 value={selectedColor}
                 onChange={(e) => handleColorChange(e.target.value)}
               >
-                {shoeColors.map((color) => (
-                  <option key={color} value={color}>
-                    {color}
+                {productData.color.map((color) => (
+                  <option key={color.id} value={color.color_label}>
+                    {color.color_label}
                   </option>
                 ))}
               </select>
@@ -93,8 +109,8 @@ const Produit = () => {
           </div>
 
           <div className="product-details">
-            <h2>Shoe Name</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+            <h2>{productData.title}</h2>
+            <p>{productData.description}</p>
             <div className="action-buttons">
               <button className='actionB' onClick={handleAddToCart}>Add to Cart</button>
               <button className='actionB' onClick={handleAddToFavorites}>Add to Favorites</button>
