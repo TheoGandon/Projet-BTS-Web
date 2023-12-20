@@ -31,6 +31,19 @@ class ClientRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAddresses($client_id):array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('clientId', $client_id)
+            ->select('address.id')
+            ->from('App\Entity\Address', 'address')
+            ->join('address.client_id', 'client')
+            ->where('client.id= :clientId')
+            ->getQuery()
+            ->getResult();
+
+    }
 //    /**
 //     * @return Client[] Returns an array of Client objects
 //     */
