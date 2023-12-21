@@ -1,7 +1,5 @@
 import React from 'react';
-import "./css/contact.css";
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
+import "../css/Contact.css";
 import { motion, useAnimation } from "framer-motion";
 import { MdOutlineSmartphone } from "react-icons/md";
 import { GrMailOption } from "react-icons/gr";
@@ -9,7 +7,6 @@ import { GrMailOption } from "react-icons/gr";
 const Contact = () => {
     return (
         <div>
-            <Navbar />
             <motion.div
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
@@ -35,7 +32,6 @@ const Contact = () => {
 
 
             </motion.div>
-            <Footer />
         </div>
     )
 }

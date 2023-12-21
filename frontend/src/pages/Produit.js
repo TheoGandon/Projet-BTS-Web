@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import './css/Produit.css';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
-import Slider from './component/Slider';
+import '../css/Produit.css';
+import Slider from '../component/Slider';
 
 const Produit = () => {
   const [selectedColor, setSelectedColor] = useState('');
@@ -50,7 +48,6 @@ const Produit = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="shoe-product-container">
         <div className="shoe-images">
           <motion.img
@@ -119,7 +116,6 @@ const Produit = () => {
         </div>
       </div>
       <Slider />
-      <Footer />
     </div>
   );
 };

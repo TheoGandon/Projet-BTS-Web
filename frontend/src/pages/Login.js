@@ -1,7 +1,7 @@
 import { TbMailFilled } from "react-icons/tb";
 import { Si1Password } from "react-icons/si";
 import { motion } from "framer-motion";
-import "./css/Login.css";
+import "../css/Login.css";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },

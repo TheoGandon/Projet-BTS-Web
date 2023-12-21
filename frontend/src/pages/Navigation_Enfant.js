@@ -1,7 +1,5 @@
 import React from 'react';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
-import './css/Navigation.css';
+import '../css/Navigation.css';
 
 const handleButtonClick = (index) => {
     const redirectionLink = `/produit'${index + 1}`;
@@ -75,9 +73,7 @@ const handleButtonClick = (index) => {
     
     return (
       <div>
-        <Navbar />
         <Gallery/>
-        <Footer />
       </div>
     );
   };

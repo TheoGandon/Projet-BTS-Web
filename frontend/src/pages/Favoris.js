@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from './component/Navbar';
-import Footer from './component/Footer';
-import './css/Favoris.css';
+import '../css/Favoris.css';
 
 const Favorites = () => {
   const handleButtonClick = (index) => {
@@ -73,9 +71,7 @@ const Favorites = () => {
 
   return (
     <div>
-      <Navbar />
       <FavoritesGallery />
-      <Footer />
     </div>
   );
 };

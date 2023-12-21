@@ -6,6 +6,8 @@ import Logo from "../Asset/SneakHubLogo.PNG";
 import "../css/Navbar.css";
 import "../css/App.css"; 
 
+
+
 const container = {
   hidden: { opacity: 1, scale: 0 },
   visible: {
@@ -34,7 +36,7 @@ const Navbar = () => {
       </a>
       <div className="link-nav">
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-        <a href="/accueil">Home</a>
+        <a href="/home">Home</a>
         </motion.div>
         <motion.div variants={item} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
         <a href="/navigation">Product</a>
