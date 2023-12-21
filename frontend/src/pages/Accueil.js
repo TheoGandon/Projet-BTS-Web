@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { styled } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import '../css/Accueil.css';
-import { motion } from 'framer-motion';
+
+const StyledItem = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const Accueil = () => {
   const [products, setProducts] = useState([]);
@@ -13,21 +23,22 @@ const Accueil = () => {
   }, []);
 
   return (
-    <div className='box'>
-      <motion.div
-        initial={{ opacity: 0, x: '100%' }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, w: '100%' }}
-        transition={{ type: 'just', duration: 1 }}
-      >
-        <div className='product'>
-          <h2>Hommes</h2>
-          <div className='product-container'>
-            {products.map((product) => (
-              <div key={product.id} className='product-card'>
-                {product.pictures.length > 0 && (
-                  <img src={product.pictures[0].picture_link} alt={product.title} />
-                )}
+    <div className='product'>
+      <h2>Hommes</h2>
+      <div className='product-container'>
+        <Grid className='custom-grid' container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {products.map((product) => (
+            <Grid item xs={4} key={product.id}>
+              <StyledItem className='product-card'>
+                <Box>
+                  {product.pictures.length > 0 && (
+                    <img
+                      src={product.pictures[0].picture_link}
+                      alt={product.title}
+                      className='product-image'
+                    />
+                  )}
+                </Box>
                 <div className='card-container'>
                   <h3>{product.title}</h3>
                   <p>{`€${parseFloat(product.selling_price).toFixed(2)}`}</p>
@@ -37,14 +48,14 @@ const Accueil = () => {
                     <span className='star'>&#9733;</span>
                     <span className='star'>&#9733;</span>
                     <span className='star'>&#9733;</span>
-                    <span className='panier' href='<panier/>'>&#129530;</span>
+                    <span className='panier'>&#129530;</span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
+              </StyledItem>
+            </Grid>
+          ))}
+        </Grid>
+      </div>
     </div>
   );
 };

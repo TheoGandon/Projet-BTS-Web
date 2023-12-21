@@ -6,6 +6,8 @@ import Logo from "../Asset/SneakHubLogo.PNG";
 import "../css/Navbar.css";
 import "../css/App.css"; 
 
+
+
 const container = {
   hidden: { opacity: 1, scale: 0 },
   visible: {

@@ -1,185 +1,21 @@
-body{
-
-        justify-content: center;
-        align-items: center;
-}
-
-.maine{ 
-    width: 90%;
-    margin: 2% 5% 0 5%;
-    display: inline-flex;
-}
-
-/****************************************************************/
-/****************************NEW ARRIVAGE ***********************/
-/****************************************************************/
-
-.arrival{
-    height: 567px;
-    width:80%;
-    background-color: aquamarine;
-}
-
-
-.arrival h1{
-    font-size: 47px;
-}
-
-.arrival p{
-    font-size: 20px;
-    margin: 4% 0 4% 0;
-}
-
-.arrival-text{
-    width: 70%;
-    padding: 20% 0 0 15%;
-}
-
-/****************************************************************/
-/****************************MARQUES ****************************/
-/****************************************************************/
-
-.brand { 
-    width: 60%;
-    margin-left: 1%;
-    display: grid;
-    max-width: 800px;
-    grid-template-columns:1fr 1fr;
-}
-
-.nike{ 
-    margin-right: 4%;
-    height: 279px;
-    text-align: center;
-    background-color: bisque;
-}
-
-h1{
-    color: #ffffff;
-    font-size: 25px;
-}
-
-.maine p{
-    color: #ffffff;
-}
-
-.nike-text{
-    width: 80%;
-    padding: 22% 0 0 22%;
-}
-
-
-.nike button, .maine button {
-  align-items: center;
-  appearance: none;
-  background-color: #fff;
-  border-radius: 24px;
-  border-style: none;
-  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
-  box-sizing: border-box;
-  color: #3c4043;
-  cursor: pointer;
-  display: inline-flex;
-  fill: currentcolor;
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  height: 48px;
-  justify-content: center;
-  letter-spacing: .25px;
-  line-height: normal;
-  max-width: 100%;
-  padding: 2px 24px;
-  position: relative;
-  text-align: center;
-  text-transform: none;
-  width: auto;
-  margin-top: 10%;
-}
-
-.nike button:hover {
-  background: #F6F9FE;
-  color: #174ea6;
-}
-
-
-/****************************************************************/
-/***************************PRODUCT CARD*************************/
-/****************************************************************/
-
-.product{
+.custom-grid {
     margin: 5%;
-    margin-bottom: 0;
+    padding: 5%;
 }
 
-.product-container{
+.product h2 {
+    font-size: 60px;
+    margin: 1%;
     text-align: center;
-    align-items: center;
 }
 
-.product-card{
-    margin-right: 3%;
-    text-align: center;
-    width: 300px;
-    height: 300px;
-}
-
-.product-card img{
-    width: 100%;
-    margin-bottom: 30%;
+.product-image {
+    width: 350px;
+    height: 350px;
     object-fit: cover;
 }
 
-.card-container{
-    display: grid;
-    padding-top: 2%;
-    text-align: left;
-    height: 29%;
-    background-color: rgba(206, 206, 206, 0.292);
-}
-
-.card-container p{
-    margin-top: 4%;
-}
-
-.rating{
-    margin-top: 2%;
-}
-
-.panier{
-    margin-left: 57%;
-}
-
-@media screen and (max-width: 768px) {
-    .product-card {
-        width: 45%; /* Ajuste la largeur des cartes pour tenir sur l'écran */
-        margin-right: 0; /* Supprime la marge à droite pour éviter les décalages */
-        margin-bottom: 5%; /* Ajoute un espace entre les cartes */
-    }
-
-    .product-container {
-        justify-content: center; /* Centre les cartes sur l'écran */
-    }
-
-    .panier {
-        margin-left: 0; /* Ajuste la position du contenu du panier */
-        text-align: center; /* Centre le contenu du panier */
-        margin-top: 5px; /* Ajoute un espace entre le contenu du panier et les cartes */
-    }
-
-    .nike {
-        display: flex;
-    }
-}
-
-/* Pour les écrans encore plus petits, comme les téléphones */
-@media screen and (max-width: 480px) {
-    .product-card {
-        width: 100%; /* Fait en sorte que les cartes occupent toute la largeur */
-        margin-bottom: 5%; /* Ajoute un espace entre les cartes */
-    }
-
-    .panier {
-        margin-top: 10px; /* Augmente l'espace au-dessus du contenu du panier */
-    }
+.product-card {
+    margin: 10%;
+    box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
