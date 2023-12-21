@@ -38,8 +38,8 @@ class Article
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'articles')]
     private Collection $orders;
 
-    #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'cart_articles')]
-    private Collection $clients_cart;
+    #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'favourite_articles')]
+    private Collection $clients_favourites;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticlePicture::class)]
     private Collection $articlePictures;
@@ -50,7 +50,7 @@ class Article
     {
         $this->stock = new ArrayCollection();
         $this->orders = new ArrayCollection();
-        $this->clients_cart = new ArrayCollection();
+        $this->clients_favourites = new ArrayCollection();
         $this->articlePictures = new ArrayCollection();
     }
 
@@ -170,23 +170,23 @@ class Article
     /**
      * @return Collection<int, Client>
      */
-    public function getClientsCart(): Collection
+    public function getClientsFavourites(): Collection
     {
-        return $this->clients_cart;
+        return $this->clients_favourites;
     }
 
-    public function addClientsCart(Client $clientsCart): static
+    public function addClientsFavourites(Client $clientsFavourites): static
     {
-        if (!$this->clients_cart->contains($clientsCart)) {
-            $this->clients_cart->add($clientsCart);
+        if (!$this->clients_favourites->contains($clientsFavourites)) {
+            $this->clients_favourites->add($clientsFavourites);
         }
 
         return $this;
     }
 
-    public function removeClientsCart(Client $clientsCart): static
+    public function removeClientsFavourites(Client $clientsFavourites): static
     {
-        $this->clients_cart->removeElement($clientsCart);
+        $this->clients_favourites->removeElement($clientsFavourites);
 
         return $this;
     }

@@ -20,8 +20,16 @@ class LoginController extends AbstractController
         if($method == "POST"){
             try {
 
-                $input_email = $_POST['email'];
-                $input_password = $_POST["password"];
+                if(isset($_POST['email'])){
+                    $input_email = $_POST['email'];
+                } elseif (isset(json_decode(file_get_contents('php://input'), true)['email'])){
+                    $input_email = json_decode(file_get_contents('php://input'), true)['email'];
+                }else return new Response('email not defined', Response::HTTP_BAD_REQUEST);
+                if(isset($_POST['password'])){
+                    $input_password = $_POST['password'];
+                } elseif (isset(json_decode(file_get_contents('php://input'), true)['password'])){
+                    $input_password = json_decode(file_get_contents('php://input'), true)['password'];
+                }else return new Response('password not defined', Response::HTTP_BAD_REQUEST);
 
                 $clients = $clientRepository->findLoginClient($input_email);
 
@@ -34,10 +42,7 @@ class LoginController extends AbstractController
                     $loggedin["last_name"] = $clients[0]["client_last_name"];
                     $loggedin["email"] = $clients[0]["client_email"];
                     $session->set("loginsession", $loggedin);
-                    return new JsonResponse([
-                        'response'=>200,
-                        'value'=>'User successfully logged in'
-                    ]);
+                    return new Response('User successfully connected', Response::HTTP_OK);
 
                 }
 
@@ -45,7 +50,7 @@ class LoginController extends AbstractController
                 error_log($e->getMessage());
             }
         }
-        return new Response("Unable to login !");
+        return new Response("Unable to login !", Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/api/logout', name: 'app_logout')]
@@ -54,15 +59,9 @@ class LoginController extends AbstractController
         $loginsession = $session->get("loginsession");
         if(!is_null($loginsession)){
             $session->clear();
-            return new JsonResponse([
-                'response'=>200,
-                'value'=>'Session cleared successfully'
-            ]);
+            return new Response('Session Cleared Successfully', Response::HTTP_OK);
         } else {
-            return new JsonResponse([
-                'response' => 200,
-                'value' => 'No session to clear'
-            ]);
+            return new Response('No session to clear', Response::HTTP_BAD_REQUEST);
         }
     }
 }

@@ -6,9 +6,11 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
-class Client
+class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,31 +18,34 @@ class Client
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $client_first_name = null;
+    private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $client_last_name = null;
+    private ?string $last_name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $client_email = null;
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
 
-    #[ORM\Column(length: 512)]
-    private ?string $client_password = null;
+    #[ORM\Column]
+    private array $roles = [];
 
-    #[ORM\OneToMany(mappedBy: 'client_id', targetEntity: Address::class, orphanRemoval: true)]
-    private Collection $array_adresses;
+    #[ORM\Column]
+    private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Address::class, orphanRemoval: true)]
+    private Collection $adresses;
 
     #[ORM\OneToMany(mappedBy: 'client_id', targetEntity: Order::class)]
-    private Collection $array_orders;
+    private Collection $orders;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'clients_cart')]
-    private Collection $cart_articles;
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'clients_favourites')]
+    private Collection $favourite_articles;
 
     public function __construct()
     {
-        $this->array_adresses = new ArrayCollection();
-        $this->array_orders = new ArrayCollection();
-        $this->cart_articles = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->favourite_articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -48,78 +53,119 @@ class Client
         return $this->id;
     }
 
-    public function getClientFirstName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->client_first_name;
+        return $this->first_name;
     }
 
-    public function setClientFirstName(string $client_first_name): static
+    public function setFirstName(string $first_name): static
     {
-        $this->client_first_name = $client_first_name;
+        $this->first_name = $first_name;
 
         return $this;
     }
 
-    public function getClientLastName(): ?string
+    public function getLastName(): ?string
     {
-        return $this->client_last_name;
+        return $this->last_name;
     }
 
-    public function setClientLastName(string $client_last_name): static
+    public function setLastName(string $last_name): static
     {
-        $this->client_last_name = $client_last_name;
+        $this->last_name = $last_name;
 
         return $this;
     }
 
-    public function getClientEmail(): ?string
+    public function getEmail(): ?string
     {
-        return $this->client_email;
+        return $this->email;
     }
 
-    public function setClientEmail(string $client_email): static
+    public function setEmail(string $email): static
     {
-        $this->client_email = $client_email;
-
-        return $this;
-    }
-
-    public function getClientPassword(): ?string
-    {
-        return $this->client_password;
-    }
-
-    public function setClientPassword(string $client_password): static
-    {
-        $this->client_password = $client_password;
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Address>
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
      */
-    public function getArrayAdresses(): Collection
+    public function getUserIdentifier(): string
     {
-        return $this->array_adresses;
+        return (string) $this->email;
     }
 
-    public function addArrayAdress(Address $arrayAdress): static
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        if (!$this->array_adresses->contains($arrayAdress)) {
-            $this->array_adresses->add($arrayAdress);
-            $arrayAdress->setClientId($this);
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAdresses(): Collection
+    {
+        return $this->adresses;
+    }
+
+    public function addAdress(Address $Adress): static
+    {
+        if (!$this->adresses->contains($Adress)) {
+            $this->adresses->add($Adress);
+            $Adress->setClientId($this);
         }
 
         return $this;
     }
 
-    public function removeArrayAdress(Address $arrayAdress): static
+    public function removeAdress(Address $Adress): static
     {
-        if ($this->array_adresses->removeElement($arrayAdress)) {
+        if ($this->adresses->removeElement($Adress)) {
             // set the owning side to null (unless already changed)
-            if ($arrayAdress->getClientId() === $this) {
-                $arrayAdress->setClientId(null);
+            if ($Adress->getClientId() === $this) {
+                $Adress->setClientId(null);
             }
         }
 
@@ -129,27 +175,27 @@ class Client
     /**
      * @return Collection<int, Order>
      */
-    public function getArrayOrders(): Collection
+    public function getOrders(): Collection
     {
-        return $this->array_orders;
+        return $this->orders;
     }
 
-    public function addArrayOrder(Order $arrayOrder): static
+    public function addOrder(Order $order): static
     {
-        if (!$this->array_orders->contains($arrayOrder)) {
-            $this->array_orders->add($arrayOrder);
-            $arrayOrder->setClientId($this);
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setClientId($this);
         }
 
         return $this;
     }
 
-    public function removeArrayOrder(Order $arrayOrder): static
+    public function removeOrder(Order $Order): static
     {
-        if ($this->array_orders->removeElement($arrayOrder)) {
+        if ($this->orders->removeElement($Order)) {
             // set the owning side to null (unless already changed)
-            if ($arrayOrder->getClientId() === $this) {
-                $arrayOrder->setClientId(null);
+            if ($Order->getClientId() === $this) {
+                $Order->setClientId(null);
             }
         }
 
@@ -159,25 +205,25 @@ class Client
     /**
      * @return Collection<int, Article>
      */
-    public function getCartArticles(): Collection
+    public function getFavouriteArticles(): Collection
     {
-        return $this->cart_articles;
+        return $this->favourite_articles;
     }
 
-    public function addCartArticle(Article $cartArticle): static
+    public function addFavouriteArticle(Article $favouriteArticle): static
     {
-        if (!$this->cart_articles->contains($cartArticle)) {
-            $this->cart_articles->add($cartArticle);
-            $cartArticle->addClientsCart($this);
+        if (!$this->favourite_articles->contains($favouriteArticle)) {
+            $this->favourite_articles->add($favouriteArticle);
+            $favouriteArticle->addClientsFavourites($this);
         }
 
         return $this;
     }
 
-    public function removeCartArticle(Article $cartArticle): static
+    public function removeFavouriteArticle(Article $favouriteArticle): static
     {
-        if ($this->cart_articles->removeElement($cartArticle)) {
-            $cartArticle->removeClientsCart($this);
+        if ($this->favourite_articles->removeElement($favouriteArticle)) {
+            $favouriteArticle->removeClientsFavourites($this);
         }
 
         return $this;
