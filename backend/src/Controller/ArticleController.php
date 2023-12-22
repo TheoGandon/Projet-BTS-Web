@@ -10,13 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GetProductsController extends AbstractController
+class ArticleController extends AbstractController
 {
-    #[Route('/api/get/articles', name: 'app_get_products')]
+    #[Route('/api/articles', name: 'app_get_products')]
     public function getProducts(ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if($method == "GET") {
+        if($_SERVER['REQUEST_METHOD'] == "GET") {
             $articles = $articleRepository->findAll();
 
             $data = [];
@@ -47,7 +46,7 @@ class GetProductsController extends AbstractController
         }
     }
 
-    #[Route('/api/get/articles/by/color/{color_id}', name: 'app_get_products_by_color')]
+    #[Route('/api/articles/filter/color/{color_id}', name: 'app_get_products_by_color')]
     public function getProductsByColor(string $color_id, ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -80,7 +79,7 @@ class GetProductsController extends AbstractController
         }
     }
 
-    #[Route('/api/get/articles/by/size/{size_id}', name: 'app_get_products_by_size')]
+    #[Route('/api/articles/filter/size/{size_id}', name: 'app_get_products_by_size')]
     public function getArticleBySize(string $size_id, ArticleRepository $articleRepository): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -115,7 +114,7 @@ class GetProductsController extends AbstractController
         }
     }
 
-    #[Route('/api/get/articles/by/category/{category_id}', name: 'app_get_products_by_category')]
+    #[Route('/api/articles/filter/category/{category_id}', name: 'app_get_products_by_category')]
     public function getArticleByCategory(string $category_id, ArticleRepository $articleRepository): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -146,7 +145,7 @@ class GetProductsController extends AbstractController
 
             return new JsonResponse($data);
         } else {
-        return new Response('Wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
+            return new Response('Wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
 
