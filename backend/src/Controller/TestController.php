@@ -15,7 +15,18 @@ class TestController extends AbstractController
     {
 
         $request = $_SERVER;
-        $users = $clientRepository->findAll();
+        // $users = $clientRepository->findAll();
+        $response = new Response("THIS IS A TEST RESPONSE");
+        $response->headers->add(['Set-Cookie'=>'testCookie_jqzdqn=new;path=/;httpOnly;SameSite=none;']);
+
+
+        return $response;
+    }
+
+    #[Route('/openapi/get', name: 'app_apitest1')]
+    public function getAPI():Response
+    {
+        $request = $_SERVER;
         return new JsonResponse($request);
     }
 }
