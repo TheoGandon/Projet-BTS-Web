@@ -149,7 +149,7 @@ class ArticleController extends AbstractController
         }
     }
 
-    #[Route('/api/get/articles/{id}', name: 'app_get_single_product')]
+    #[Route('/api/articles/{id}', name: 'app_get_single_product')]
     public function getSingleProduct(int $id, ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
