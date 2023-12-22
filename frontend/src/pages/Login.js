@@ -37,13 +37,12 @@ function Login(props) {
         await axios.post('http://localhost:8080/api/login_check', {
             email: email,
             password: password
-        })
+        }, {withCredentials: true})
         .then(function (response) {
             console.log(response.status);
-            props.setToken(response.data.token);
-            if(response.status = 200){
-              navigate('/home');
+            if(response.status = 200){              
               props.setToken(response.data.token);
+              navigate('/home');
             }
         })
         .catch((error) => {
