@@ -45,8 +45,10 @@ const Navbar = () => {
         <a href="/contact">Contact</a>
         </motion.div>
       </div>
-      <a href="/favorit"><MdOutlineFavorite className="logo-nav"size={35}/></a>
-      <a href="/panier"><CiShoppingCart className="logo-nav" size={35}/></a>
+      <div className="logo-nav-bar">
+        <a href="/favorit"><MdOutlineFavorite className="logo-nav"size={35}/></a>
+        <a href="/panier"><CiShoppingCart className="logo-nav" size={35}/></a>
+      </div>
     </motion.nav>
   );
 };

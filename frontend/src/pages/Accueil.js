@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import '../css/Accueil.css';
+import { styled } from '@mui/material/styles';
+import '../css/accueil.css';
+
 
 const StyledItem = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

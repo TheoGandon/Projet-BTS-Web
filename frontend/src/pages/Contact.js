@@ -1,5 +1,5 @@
 import React from 'react';
-import "../css/Contact.css";
+import "../css/contact.css";
 import { motion, useAnimation } from "framer-motion";
 import { MdOutlineSmartphone } from "react-icons/md";
 import { GrMailOption } from "react-icons/gr";
