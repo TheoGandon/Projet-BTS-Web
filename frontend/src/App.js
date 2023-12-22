@@ -8,8 +8,8 @@ import Panier from './pages/Panier';
 import Produit from './pages/Produit';
 import Favoris from './pages/Favoris';
 import Navigation from './pages/Navigation';
-import Navigation_Femme from './pages/Navigation_Femme';
-import Navigation_Enfant from './pages/Navigation_Enfant';
+import NavigationFemme from './pages/Navigation_Femme';
+import NavigationEnfant from './pages/Navigation_Enfant';
 import Commande from './pages/Commande';
 import Accueil from './pages/Accueil';
 import Contact from './pages/Contact';
@@ -25,11 +25,11 @@ return (
       <Routes>
         <Route path="/" element={<Login token={jwtToken} setToken={setJwtToken} />} />
         <Route path="/panier" element={<Panier token={jwtToken} setToken={setJwtToken} />} />
-        <Route path="/produit'1" element={<Produit token={jwtToken} setToken={setJwtToken} />} /> 
+        <Route path="/produit/:articleId" element={<Produit />} />
         <Route path="/favorit" element={<Favoris token={jwtToken} setToken={setJwtToken} />} />
         <Route path="/navigation" element={<Navigation token={jwtToken} setToken={setJwtToken} />} />
-        <Route path="/navigationfemme" element={<Navigation_Femme token={jwtToken} setToken={setJwtToken} />} />
-        <Route path="/navigationenfant" element={<Navigation_Enfant token={jwtToken} setToken={setJwtToken} />} />
+        <Route path="/navigationfemme" element={<NavigationFemme token={jwtToken} setToken={setJwtToken} />} />
+        <Route path="/navigationenfant" element={<NavigationEnfant token={jwtToken} setToken={setJwtToken} />} />
         <Route path="/commande" element={<Commande token={jwtToken} setToken={setJwtToken} />} />
         <Route path="/home" element={<Accueil token={jwtToken} setToken={setJwtToken}/>} />
         <Route path="/contact" element={<Contact token={jwtToken} setToken={setJwtToken}/>} />

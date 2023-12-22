@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';  // Importez useParams
+
 import '../css/Produit.css';
 import Slider from '../component/Slider';
 
 const Produit = () => {
+  const { articleId } = useParams();  // Utilisez useParams pour obtenir les paramètres de l'URL
+  console.log("Article ID:", articleId);
+
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
@@ -18,7 +23,7 @@ const Produit = () => {
   });
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/get/articles/21')
+    fetch(`http://localhost:8080/api/get/articles/${articleId}`)
       .then(response => response.json())
       .then(data => {
         setProductData(data);
@@ -27,7 +32,7 @@ const Produit = () => {
         setSelectedImage(data.pictures.length > 0 ? data.pictures[0].picture_link : '');
       })
       .catch(error => console.error('Error fetching product data:', error));
-  }, []);
+  }, [articleId]);
 
   const handleColorChange = (color) => {
     setSelectedColor(color);

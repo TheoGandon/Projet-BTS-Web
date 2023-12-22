@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
-import '../css/accueil.css';
+import '../css/Navigation.css';
+import { Link } from 'react-router-dom';
 
 
 const StyledItem = styled(Box)(({ theme }) => ({
@@ -51,6 +52,7 @@ const Navigation = () => {
                     <span className='star'>&#9733;</span>
                     <span className='panier'>&#129530;</span>
                   </div>
+                  <Link className='btn-details' to={`/produit/${product.id}`}>Voir détails</Link>
                 </div>
               </StyledItem>
             </Grid>
