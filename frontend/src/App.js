@@ -22,6 +22,7 @@ function App() {
   const [jwtToken, setJwtToken] = useState("");
 
   const isAuthenticated = () => {
+    console.log(jwtToken!== "")
     return jwtToken !== "";
   };
 
