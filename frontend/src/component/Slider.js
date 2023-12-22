@@ -1,24 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ScrollCarousel from 'scroll-carousel-react';
-import Dunk from '../Asset/dunk.PNG'
-import '../css/Slider.css'
-
+import '../css/Slider.css';
+import { Link } from 'react-router-dom';
 
 const Slider = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/api/get/articles')
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error('Error fetching products:', error));
+  }, []);
+
+  if (products.length === 0) {
+    return <p>Loading...</p>;
+  }
+
   return (
-      <ScrollCarousel
-        autoplaySpeed={0.5}
-        speed={1}
-        autoplay
-      >
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((item) => (
-          <div key={item} className='Slider'>
-            <a href='#'>
-            <img src={Dunk} alt='Dunk' />²
-            </a>
-          </div>
-        ))}
-      </ScrollCarousel>
+    <ScrollCarousel autoplaySpeed={0.5} speed={1} autoplay>
+      {products.map((product) => (
+        <div key={product.id} className='Slider'>
+            {product.pictures.length > 0 && (
+              <img src={product.pictures[0].picture_link} alt={product.title} />
+            )}
+            <Link className='btn-details' to={`/produit/${product.id}`}>Voir détails</Link>
+        </div>
+      ))}
+    </ScrollCarousel>
   );
 };
 

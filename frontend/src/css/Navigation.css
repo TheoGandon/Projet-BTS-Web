@@ -1,42 +1,26 @@
-.profiles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+.custom-grid {
+  margin: 5%;
+  padding: 5%;
 }
 
-.profile {
-  width: calc(33.33% - 20px);
-  height: 500px;
-  margin: 10px;
-  position: relative;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  padding: 10px;
+.product h2 {
+  font-size: 60px;
+  margin: 1%;
+  text-align: center;
 }
 
-.profile img {
-  width: 100%;
-  max-width: 400px;
-  max-height: 300px;
-  height: 100%;
-  object-fit: scale-down;
-  transition: transform 0.5s ease;
+.product-image {
+  width: 350px;
+  height: 350px;
+  object-fit: cover;
 }
 
-.overlay-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.product-card {
+  margin: 10%;
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
 }
 
-.overlay-text span {
+.btn-details {
+  color: black;
   font-size: 20px;
-  cursor: pointer;
-}
-
-.profile-button {
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: blue;
 }
