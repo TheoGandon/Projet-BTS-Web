@@ -7,14 +7,40 @@ use App\Repository\AddressRepository;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ClientController extends AbstractController
 {
+    #[Route('/api/infosclient/', name: 'app_get_client_infos')]
+    public function getClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager):Response
+    {
+        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+        $clientemail = $decodedJwtToken["email"];
+        $client = $clientRepository->findBy(["email"=>$clientemail])[0];
+        $id = $client->getId();
+        $first_name = $client->getFirstName();
+        $last_name = $client->getLastName();
+        $email = $client->getEmail();
+        $password = $client->getPassword();
+
+        $clientInfos = [
+            'id'=>$id,
+            "first_name"=>$first_name,
+            "last_name"=>$last_name,
+            'email'=>$email,
+            'password'=>$password
+        ];
+
+        return new JsonResponse($clientInfos);
+
+    }
+
     #[Route('/api/addaddress', name: 'add_address')]
     public function addAddress(ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, ): Response
     {

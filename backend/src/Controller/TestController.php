@@ -10,10 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TestController extends AbstractController
 {
-    #[Route('/api/test', name: 'app_apitest')]
+    #[Route('/openapi/test', name: 'app_apitest')]
     public function index(ClientRepository $clientRepository): Response
     {
+
+        $request = $_SERVER;
         $users = $clientRepository->findAll();
-        return new JsonResponse($users);
+        return new JsonResponse($request);
     }
 }
