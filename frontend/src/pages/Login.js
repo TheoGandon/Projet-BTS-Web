@@ -41,7 +41,10 @@ function Login(props) {
         .then(function (response) {
             console.log(response.status);
             props.setToken(response.data.token);
-            if(response.status = 200) navigate('/home');
+            if(response.status = 200){
+              navigate('/home');
+              props.setToken(response.data.token);
+            }
         })
         .catch((error) => {
             console.error(error);
