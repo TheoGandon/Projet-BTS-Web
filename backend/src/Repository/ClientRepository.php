@@ -56,11 +56,25 @@ class ClientRepository extends ServiceEntityRepository
             ->setParameter('clientId', $client_id)
             ->select('address.id')
             ->from('App\Entity\Address', 'address')
-            ->join('address.client_id', 'client')
+            ->join('address.client', 'client')
             ->where('client.id= :clientId')
             ->getQuery()
             ->getResult();
 
+    }
+
+    public function updateClientFields(int $id,string $first_name, string $last_name, string $email, string $password)
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameters(["id"=>$id,"firstName"=>$first_name, "lastName"=>$last_name, "email"=>$email, 'password'=>$password])
+            ->update('App\Entity\Client', 'client_table')
+            ->set('client_table.first_name', ':firstName')
+            ->set('client_table.last_name', ':lastName')
+            ->set('client_table.email', ':email')
+            ->set('client_table.password', ':password')
+            ->where('client_table.id= :id')
+            ->getQuery()
+            ->execute();
     }
 //    /**
 //     * @return Client[] Returns an array of Client objects
