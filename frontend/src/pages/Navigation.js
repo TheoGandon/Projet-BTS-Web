@@ -1,60 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import '../css/Navigation.css';
+import React, { useEffect, useState } from 'react';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
+import '../css/accueil.css';
+
+
+const StyledItem = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const Navigation = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Fetch data from the API
     fetch('http://localhost:8080/api/get/articles')
-      .then(response => response.json())
-      .then(data => setProducts(data))
-      .catch(error => console.error('Error fetching data:', error));
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error('Error fetching products:', error));
   }, []);
 
-  const handleButtonClick = (index) => {
-    const redirectionLink = `/produit/${index + 1}`;
-    window.location.href = redirectionLink;
-  };
-
-  const renderProduct = (product, index) => {
-    const { id, title, selling_price, pictures } = product;
-    const price = `${selling_price}€`;
-
-    const imageSrc = pictures && pictures.length > 0 ? pictures[0].picture_link : '';
-
-    return (
-      <div key={id} className="profile">
-        <button className="profile-button" onClick={() => handleButtonClick(index)}>
-        <div className="overlay-text">
-        {imageSrc && <img src={imageSrc} alt={`Article ${id}`} />}
-          <div className="label-top-left">{`Article ${title}`}</div>
-          <div className="label-top-right">{`${price}`}</div>
-          <span style={{ color: 'red' }}>&#10084;</span> <span style={{ color: 'black' }}>&#128722;</span>
-        </div>
-        
-        </button>
-      </div>
-    );
-  };
-
   return (
-    <div>
-      <section className="gallery">
-        <div className="gallery-header">
-          <h1>Hommes</h1>
-          <div className="filter-sort">
-            <span onClick={() => console.log('Filtres')}>Filtres</span>
-            <span onClick={() => console.log('Trier par')} style={{ marginLeft: '10px' }}>Trier par</span>
-          </div>
-        </div>
-        <div className="profiles">
-          {products.map((product, index) => renderProduct(product, index))}
-        </div>
-        <button className="arrow-down">
-          <span>&#8595;</span>
-        </button>
-      </section>
+    <div className='product'>
+      <h2>Hommes</h2>
+      <div className='product-container'>
+        <Grid className='custom-grid' container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          {products.map((product) => (
+            <Grid item xs={4} key={product.id}>
+              <StyledItem className='product-card'>
+                <Box>
+                  {product.pictures.length > 0 && (
+                    <img
+                      src={product.pictures[0].picture_link}
+                      alt={product.title}
+                      className='product-image'
+                    />
+                  )}
+                </Box>
+                <div className='card-container'>
+                  <h3>{product.title}</h3>
+                  <p>{`€${parseFloat(product.selling_price).toFixed(2)}`}</p>
+                  <div className='rating'>
+                    <span className='star'>&#9733;</span>
+                    <span className='star'>&#9733;</span>
+                    <span className='star'>&#9733;</span>
+                    <span className='star'>&#9733;</span>
+                    <span className='star'>&#9733;</span>
+                    <span className='panier'>&#129530;</span>
+                  </div>
+                </div>
+              </StyledItem>
+            </Grid>
+          ))}
+        </Grid>
+      </div>
     </div>
   );
 };
