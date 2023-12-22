@@ -31,9 +31,9 @@ class Address
     #[ORM\Column(length: 255)]
     private ?string $address_phone_number = null;
 
-    #[ORM\ManyToOne(inversedBy: 'array_adresses')]
+    #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client_id = null;
+    private ?Client $client = null;
 
     public function getId(): ?int
     {
@@ -112,14 +112,14 @@ class Address
         return $this;
     }
 
-    public function getClientId(): ?Client
+    public function getClient(): ?Client
     {
-        return $this->client_id;
+        return $this->client;
     }
 
-    public function setClientId(?Client $client_id): static
+    public function setClient(?Client $client_id): static
     {
-        $this->client_id = $client_id;
+        $this->client = $client_id;
 
         return $this;
     }

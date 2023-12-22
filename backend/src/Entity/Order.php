@@ -23,7 +23,7 @@ class Order
     #[ORM\Column]
     private ?int $order_status = null;
 
-    #[ORM\ManyToOne(inversedBy: 'array_orders')]
+    #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client_id = null;
 

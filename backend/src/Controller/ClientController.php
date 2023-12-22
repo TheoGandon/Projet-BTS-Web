@@ -7,14 +7,40 @@ use App\Repository\AddressRepository;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ClientController extends AbstractController
 {
+    #[Route('/api/infosclient/', name: 'app_get_client_infos')]
+    public function getClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager):Response
+    {
+        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+        $clientemail = $decodedJwtToken["email"];
+        $client = $clientRepository->findBy(["email"=>$clientemail])[0];
+        $id = $client->getId();
+        $first_name = $client->getFirstName();
+        $last_name = $client->getLastName();
+        $email = $client->getEmail();
+        $password = $client->getPassword();
+
+        $clientInfos = [
+            'id'=>$id,
+            "first_name"=>$first_name,
+            "last_name"=>$last_name,
+            'email'=>$email,
+            'password'=>$password
+        ];
+
+        return new JsonResponse($clientInfos);
+
+    }
+
     #[Route('/api/addaddress', name: 'add_address')]
     public function addAddress(ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, ): Response
     {
@@ -37,21 +63,12 @@ class ClientController extends AbstractController
                 $manager->persist($address);
                 $manager->flush();
 
-                return new JsonResponse([
-                    'status'=>200,
-                    'value'=>'Address added successfully!'
-                ]);
+                return new Response('Address added successfully', Response::HTTP_OK);
             }else {
-                return new JsonResponse([
-                    'status' => 500,
-                    'error' => 'User Not Connected'
-                ]);
+                return new Response('User not logged in', Response::HTTP_FORBIDDEN);
             }
         } else {
-            return new JsonResponse([
-                'status' => 500,
-                'error' => 'Incorrect Method'
-            ]);
+            return new Response('Incorrect Method', Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
 
@@ -80,22 +97,13 @@ class ClientController extends AbstractController
                 if(count($addresses) > 0){
                     return new JsonResponse($addresses);
                 } else {
-                    return new JsonResponse([
-                        'status'=>500,
-                        'error'=>'Client has no address'
-                    ]);
+                    return new Response('User has no addresses', Response::HTTP_BAD_REQUEST);
                 }
             } else {
-                return new JsonResponse([
-                    'status'=>500,
-                    'error'=>'User not authentified'
-                ]);
+                return new Response('User not logged in / not allowed', Response::HTTP_FORBIDDEN);
             }
         } else {
-            return new JsonResponse([
-                'status'=>500,
-                'error'=>'Wrong method'
-            ]);
+            return new Response('Method Not Allowed', Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
 
@@ -113,27 +121,15 @@ class ClientController extends AbstractController
                 if($address_clientId == $loginsession['id']){
                     $manager->remove($address);
                     $manager->flush();
-                    return new JsonResponse([
-                        'status'=>200,
-                        'value'=>'Address deleted'
-                    ]);
+                    return new Response('Addreess deleted', Response::HTTP_OK);
                 } else {
-                    return new JsonResponse([
-                        'status'=>500,
-                        'error'=>'The address is not an address of the client'
-                    ]);
+                    return new Response('The address is not an address of the client', Response::HTTP_BAD_REQUEST);
                 }
             } else {
-                return new JsonResponse([
-                    'status'=>500,
-                    'error'=>'User not authentified'
-                ]);
+                return new Response('User not logged in', Response::HTTP_FORBIDDEN);
             }
         } else {
-            return new JsonResponse([
-                'status'=>500,
-                'error'=>'Wrong method'
-            ]);
+            return new Response('Wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
 }
