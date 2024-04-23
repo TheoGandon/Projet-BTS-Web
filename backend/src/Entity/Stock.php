@@ -18,12 +18,13 @@ class Stock
     #[ORM\Column]
     private ?int $amount = null;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'stock')]
-    private Collection $articles;
-
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Sizes $size = null;
+
+    #[ORM\ManyToOne(inversedBy: 'stocks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Article $Article = null;
 
     public function __construct()
     {
@@ -47,33 +48,6 @@ class Stock
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
-
-    public function addArticle(Article $article): static
-    {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->addStock($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(Article $article): static
-    {
-        if ($this->articles->removeElement($article)) {
-            $article->removeStock($this);
-        }
-
-        return $this;
-    }
-
     public function getSize(): ?Sizes
     {
         return $this->size;
@@ -82,6 +56,18 @@ class Stock
     public function setSize(?Sizes $size): static
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->Article;
+    }
+
+    public function setArticle(?Article $Article): static
+    {
+        $this->Article = $Article;
 
         return $this;
     }

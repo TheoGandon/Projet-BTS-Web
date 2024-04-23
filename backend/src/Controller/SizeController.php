@@ -10,21 +10,39 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SizeController extends AbstractController
 {
-    #[Route('/api/sizes', name: 'app_get_sizes')]
+    #[Route('/api/sizes', name: 'app_get_sizes', methods: ["GET"])]
     public function getSizes(SizesRepository $sizesRepository): Response
     {
-        if($_SERVER["REQUEST_METHOD"] == "GET"){
-            $sizes = $sizesRepository->findAll();
-            $data = [];
-            foreach ($sizes as $size){
-                $data[] = [
-                    'id'=>$size->getId(),
-                    'label'=>$size->getSizeLabel()
-                ];
-            }
-            return new JsonResponse($data);
-        } else {
-            return new Response('wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
+        $sizes = $sizesRepository->findAll();
+
+        if(!$sizes){
+            return new Response(content: null, status: Response::HTTP_NOT_FOUND);
         }
+
+        $data = [];
+        foreach ($sizes as $size) {
+            $data[] = [
+                'id' => $size->getId(),
+                'label' => $size->getSizeLabel()
+            ];
+        }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/api/sizes/{sizeId}', name: 'app_get_single_size', methods: ["GET"])]
+    public function getSingleSize(string $sizeId, SizesRepository $sizesRepository): Response
+    {
+        $size = $sizesRepository->findOneBy(["id"=>$sizeId]);
+
+        if(!$size){
+            return new Response(content: null, status: Response::HTTP_NOT_FOUND);
+        }
+
+        $data = [
+            'id' => $size->getId(),
+            'label' => $size->getSizeLabel()
+        ];
+
+        return new JsonResponse($data);
     }
 }

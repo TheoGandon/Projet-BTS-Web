@@ -20,9 +20,6 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
-    #[ORM\ManyToMany(targetEntity: Stock::class, inversedBy: 'articles')]
-    private Collection $stock;
-
     #[ORM\Column(length: 255)]
     private ?string $article_title = null;
 
@@ -44,14 +41,17 @@ class Article
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticlePicture::class)]
     private Collection $articlePictures;
 
+    #[ORM\OneToMany(mappedBy: 'Article', targetEntity: Stock::class)]
+    private Collection $stocks;
+
 
 
     public function __construct()
     {
-        $this->stock = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->clients_favourites = new ArrayCollection();
         $this->articlePictures = new ArrayCollection();
+        $this->stocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,30 +67,6 @@ class Article
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Stock>
-     */
-    public function getStock(): Collection
-    {
-        return $this->stock;
-    }
-
-    public function addStock(Stock $stock): static
-    {
-        if (!$this->stock->contains($stock)) {
-            $this->stock->add($stock);
-        }
-
-        return $this;
-    }
-
-    public function removeStock(Stock $stock): static
-    {
-        $this->stock->removeElement($stock);
 
         return $this;
     }
@@ -215,6 +191,36 @@ class Article
             // set the owning side to null (unless already changed)
             if ($articlePicture->getArticle() === $this) {
                 $articlePicture->setArticle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stock>
+     */
+    public function getStocks(): Collection
+    {
+        return $this->stocks;
+    }
+
+    public function addStock(Stock $stock): static
+    {
+        if (!$this->stocks->contains($stock)) {
+            $this->stocks->add($stock);
+            $stock->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStock(Stock $stock): static
+    {
+        if ($this->stocks->removeElement($stock)) {
+            // set the owning side to null (unless already changed)
+            if ($stock->getArticle() === $this) {
+                $stock->setArticle(null);
             }
         }
 

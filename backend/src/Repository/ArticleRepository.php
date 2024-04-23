@@ -37,13 +37,28 @@ class ArticleRepository extends ServiceEntityRepository
     public function getAvailableArticleSizes($article_id): array
     {
         return $this->createQueryBuilder('a')
-            ->setParameter('articleId', $article_id)
-            ->select('size.id, size.size_label')
+            ->select('sizes.id, sizes.size_label')
             ->distinct(true)
             ->from('App\Entity\Stock', 'stock')
+            ->innerJoin('stock.Article', 'article')  // Assuming 'article' is the property name for the Article association in Stock entity
+            ->innerJoin('stock.size', 'sizes')       // Assuming 'sizes' is the property name for the Size association in Stock entity
+            ->where('article.id = :articleId')
+            ->andWhere('stock.amount > 0')
+            ->setParameter('articleId', $article_id)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getArticleSizesWithStock($article_id): array
+    {
+        return $this->createQueryBuilder('a')
+            ->setParameter('articleId', $article_id)
+            ->select('stock.amount, size.id, size.size_label')
+            ->distinct(true)
+            ->from("App\Entity\Stock", 'stock')
             ->join('stock.size', 'size')
-            ->join('stock.articles', 'article')
-            ->where('article.id= :articleId and stock.amount > 0')
+            ->join('stock.Article', 'article')
+            ->where('article.id = :articleId')
             ->getQuery()
             ->getResult();
     }

@@ -18,11 +18,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class ClientController extends AbstractController
 {
     #[Route('/api/getinfos', name: 'app_get_client_infos')]
-    public function getClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager):Response
+    public function getClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
     {
         $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
         $clientEmail = $decodedJwtToken["email"];
-        $client = $clientRepository->findBy(["email"=>$clientEmail])[0];
+        $client = $clientRepository->findBy(["email" => $clientEmail])[0];
         $id = $client->getId();
         $first_name = $client->getFirstName();
         $last_name = $client->getLastName();
@@ -30,11 +30,11 @@ class ClientController extends AbstractController
         $password = $client->getPassword();
 
         $clientInfos = [
-            'id'=>$id,
-            "first_name"=>$first_name,
-            "last_name"=>$last_name,
-            'email'=>$email,
-            'password'=>$password
+            'id' => $id,
+            "first_name" => $first_name,
+            "last_name" => $last_name,
+            'email' => $email,
+            'password' => $password
         ];
 
         return new JsonResponse($clientInfos);
@@ -42,9 +42,9 @@ class ClientController extends AbstractController
     }
 
     #[Route('/api/editinfos', name: 'app_edit_client_infos')]
-    public function editClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, Request $request):Response
+    public function editClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, Request $request): Response
     {
-        if($_SERVER["REQUEST_METHOD"] == "PUT") {
+        if ($_SERVER["REQUEST_METHOD"] == "PUT") {
             $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
             $clientEmail = $decodedJwtToken["email"];
             $client = $clientRepository->findBy(["email" => $clientEmail])[0];
@@ -53,9 +53,9 @@ class ClientController extends AbstractController
             $parameters = json_decode($request->getContent(), true);
             $emailInput = filter_var($parameters["email_update"], FILTER_SANITIZE_EMAIL);
 
-            if($emailInput != false){
+            if ($emailInput != false) {
                 $exec = $clientRepository->updateClientFields($id, $parameters["first_name_update"], $parameters["last_name_update"], $emailInput, password_hash($parameters["password_update"], PASSWORD_BCRYPT));
-                if($exec){
+                if ($exec) {
                     return new Response("ok", Response::HTTP_OK);
                 } else {
                     return new Response('sql error', Response::HTTP_BAD_REQUEST);
@@ -72,7 +72,7 @@ class ClientController extends AbstractController
     public function getAddresses(ClientRepository $clientRepository, AddressRepository $addressRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        if($method == "GET") {
+        if ($method == "GET") {
             $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
             $clientEmail = $decodedJwtToken["email"];
             $client = $clientRepository->findBy(["email" => $clientEmail])[0];
@@ -106,7 +106,7 @@ class ClientController extends AbstractController
     public function addAddress(ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        if($method == "POST") {
+        if ($method == "POST") {
             $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
             $clientEmail = $decodedJwtToken["email"];
             $client = $clientRepository->findBy(["email" => $clientEmail])[0];
@@ -117,7 +117,7 @@ class ClientController extends AbstractController
             $address = new Address();
             $address->setClient($clientRepository->find($id));
             $address->setAddressStreet($parameters["address1"]);
-            if(isset($parameters["address2"])){
+            if (isset($parameters["address2"])) {
                 $address->setAddressStreet2($parameters["address2"]);
             }
             $address->setAddressPostalCode($parameters["postcode"]);
@@ -134,28 +134,23 @@ class ClientController extends AbstractController
         }
     }
 
-    #[Route('/api/remove_address/{address_id}', name: 'app_remove_address')]
-    public function removeAddress(string $address_id, ClientRepository $clientRepository, AddressRepository $addressRepository,Request $request, EntityManagerInterface $manager, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
+    #[Route('/api/remove_address/{address_id}', name: 'app_remove_address', methods: ["DELETE"])]
+    public function removeAddress(string $address_id, ClientRepository $clientRepository, AddressRepository $addressRepository, Request $request, EntityManagerInterface $manager, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if($method == "DELETE") {
-            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
-            $clientEmail = $decodedJwtToken["email"];
-            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-            $id = $client->getId();
+        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+        $clientEmail = $decodedJwtToken["email"];
+        $client = $clientRepository->findBy(["email" => $clientEmail])[0];
+        $id = $client->getId();
 
-            $address = $addressRepository->find($address_id);
-            $address_client_id = $address->getClient()->getId();
+        $address = $addressRepository->find($address_id);
+        $address_client_id = $address->getClient()->getId();
 
-            if($address_client_id == $id){
-                $manager->remove($address);
-                $manager->flush();
-                return new Response('Addreess deleted', Response::HTTP_OK);
-            } else {
-                return new Response('The address is not an address of the client', Response::HTTP_BAD_REQUEST);
-            }
+        if ($address_client_id == $id) {
+            $manager->remove($address);
+            $manager->flush();
+            return new Response('Address deleted', Response::HTTP_OK);
         } else {
-            return new Response('Wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
+            return new Response('The address is not an address of the client', Response::HTTP_BAD_REQUEST);
         }
     }
 }
