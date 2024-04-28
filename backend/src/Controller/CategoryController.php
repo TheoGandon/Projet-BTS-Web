@@ -34,7 +34,7 @@ class CategoryController extends AbstractController
 
 
     #[Route('/api/categories', name: 'app_post_categories', methods: ["POST"])]
-    #[IsGranted]
+    #[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas accès à cette ressource")]
     public function postCategories(CategoryRepository $categoryRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $jsonrequest = json_decode($request->getContent());
@@ -70,6 +70,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/categories/{idCategory}', name: 'app_patch_single_category', methods: ["PATCH"])]
+    #[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas accès à cette ressource")]
     public function patchSingleCategory(string $idCategory, CategoryRepository $categoryRepository, EntityManagerInterface $manager, Request $request): Response
     {
         $jsoncontent = json_decode($request->getContent());
@@ -92,6 +93,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/categories/{idCategory}', name: 'app_delete_single_category', methods: ["DELETE"])]
+    #[IsGranted("ROLE_ADMIN", message: "Vous n'avez pas accès à cette ressource")]
     public function deleteSingleCategory(string $idCategory, CategoryRepository $categoryRepository, EntityManagerInterface $manager, Request $request): Response
     {
         try {

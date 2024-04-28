@@ -23,39 +23,72 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ArticleController extends AbstractController
 {
-    #[Route('/api/articles', name: 'app_get_articles', methods: ["GET"])]
-    public function getArticles(ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
+    private function getArticleInfos($article, $articleRepository): array
     {
+        $id = $article->getId();
+        $title = $article->getArticleTitle();
+        $description = $article->getArticleDescription();
+        $selling_price = $article->getSellingPrice();
+        $pictures = $articleRepository->getArticlePictures($id);
+        $color = $articleRepository->getArticleColors($id);
+        $sizes = $articleRepository->getAvailableArticleSizes($id);
+        $category = $articleRepository->getArticleCategory($id);
 
-        $articles = $articleRepository->findAll();
 
-        $data = [];
-
-        foreach ($articles as $article) {
-
-            $id = $article->getId();
-            $title = $article->getArticleTitle();
-            $selling_price = $article->getSellingPrice();
-            $pictures = $articleRepository->getArticlePictures($id);
-            $colors = $articleRepository->getArticleColors($id);
-            $sizes = $articleRepository->getAvailableArticleSizes($id);
-            $category = $articleRepository->getArticleCategory($id);
-
-            $data[] = [
-                'id' => $id,
-                'title' => $title,
-                'selling_price' => $selling_price,
-                'pictures' => $pictures,
-                'colors' => $colors,
-                'available_sizes' => $sizes,
-                'category' => $category
-            ];
-        }
-
-        return new JsonResponse($data);
+        return [
+            'id' => $id,
+            'title' => $title,
+            'description' => $description,
+            'selling_price' => $selling_price,
+            'pictures' => $pictures,
+            'color' => $color,
+            'sizes' => $sizes,
+            'category' => $category
+        ];
     }
 
-    #[Route('/api/articles', name: 'app_post_article', methods: ["GET"])]
+    #[Route('/api/articles', name: 'app_get_articles', methods: ["GET"])]
+    public function getArticles(ArticleRepository $articleRepository, ): Response
+    {
+        try {
+
+            $articles = $articleRepository->findAll();
+
+            if (!$articles) {
+                return new Response(Response::HTTP_NOT_FOUND);
+            }
+
+            $data = [];
+
+            foreach ($articles as $article) {
+
+                $id = $article->getId();
+                $title = $article->getArticleTitle();
+                $selling_price = $article->getSellingPrice();
+                $pictures = $articleRepository->getArticlePictures($id);
+                $colors = $articleRepository->getArticleColors($id);
+                $sizes = $articleRepository->getAvailableArticleSizes($id);
+                $category = $articleRepository->getArticleCategory($id);
+
+                $data[] = [
+                    'id' => $id,
+                    'title' => $title,
+                    'selling_price' => $selling_price,
+                    'pictures' => $pictures,
+                    'colors' => $colors,
+                    'available_sizes' => $sizes,
+                    'category' => $category
+                ];
+            }
+
+            return new JsonResponse($data);
+        } catch (Exception $exception) {
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/api/articles', name: 'app_post_article', methods: ["POST"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
     public function postArticles(Request $request, CategoryRepository $categoryRepository, EntityManagerInterface $manager): Response
     {
         try {
@@ -68,7 +101,6 @@ class ArticleController extends AbstractController
             $newArticle->setArticleTitle($jsonContent->title);
             $newArticle->setArticleDescription($jsonContent->description);
             $newArticle->setSellingPrice($jsonContent->price);
-            $newArticle->setSellingPricePromo($jsonContent->price_promo);
             $newArticle->setCategory($category);
 
             $manager->persist($newArticle);
@@ -77,63 +109,180 @@ class ArticleController extends AbstractController
             return new JsonResponse($newArticle, Response::HTTP_CREATED);
 
         } catch (Exception $exception) {
-            return new Response(content:$exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception) {
-            return new Response(Response::HTTP_BAD_REQUEST);
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    #[Route('/api/articles/stock/{articleId}', name: 'app_get_article_with_stocks', methods: ["GET"])]
-    #[IsGranted("ROLE_ADMIN")]
-    public function getArticleStock(string $articleId, Request $request, ArticleRepository $articleRepository, CategoryRepository $categoryRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository)
+    #[Route('/api/articles/{id}', name: 'app_get_single_product', methods: ["GET"])]
+    public function getSingleProduct(int $id, ArticleRepository $articleRepository): Response
     {
-        $article = $articleRepository->findOneBy(["id"=>$articleId]);
+        try {
 
-        if(!$article){
-            return new Response(Response::HTTP_NOT_FOUND);
+            $article = $articleRepository->find($id);
+
+            if (!$article) {
+                return new Response(Response::HTTP_NOT_FOUND);
+            }
+
+            return new JsonResponse($this->getArticleInfos($article, $articleRepository), Response::HTTP_OK);
+
+        } catch (\Exception $exception) {
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/api/articles/{id}', name: 'app_patch_single_product', methods: ["PATCH"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function patchSingleProduct(int $id, ArticleRepository $articleRepository, CategoryRepository $categoryRepository, Request $request, EntityManagerInterface $manager): Response
+    {
+        try{
+            $article = $articleRepository->find($id);
+
+            if(!$article){
+                return new Response(Response::HTTP_NOT_FOUND);
+            }
+
+            $decodedContent = json_decode($request->getContent());
+
+            if(isset($decodedContent->title)){
+                $article->setArticleTitle($decodedContent->title);
+            }
+
+            if(isset($decodedContent->description)){
+                $article->setArticleDescription($decodedContent->description);
+            }
+
+            if(isset($decodedContent->price)){
+                $article->setSellingPrice($decodedContent->price);
+            }
+
+            if(isset($decodedContent->categoryId)){
+                $category = $categoryRepository->find($decodedContent->categoryId);
+                if(!$category){
+                    return new Response("Category Not Found", Response::HTTP_NOT_FOUND);
+                }
+                $article->setCategory($category);
+            }
+
+            $manager->persist($article);
+            $manager->flush();
+
+            return new JsonResponse($this->getArticleInfos($article, $articleRepository), Response::HTTP_OK);
+
+        } catch (\Exception $exception){
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/api/articles/{id}', name: 'app_delete_single_product', methods: ["DELETE"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function deleteSingleProduct(int $id, ArticleRepository $articleRepository,EntityManagerInterface $manager):Response
+    {
+        try {
+            $article = $articleRepository->find($id);
+
+            if(!$article){
+                return new Response(status: Response::HTTP_NOT_FOUND);
+            }
+
+            $manager->remove($article);
+            $manager->flush();
+
+            return new Response(status: Response::HTTP_OK);
+        } catch (\Exception $exception){
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+    #[Route('/api/articles/stock/{articleId}', name: 'app_get_article_with_stocks', methods: ["GET"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function getArticleStock(string $articleId, ArticleRepository $articleRepository, ): Response
+    {
+        try {
+            $article = $articleRepository->findOneBy(["id" => $articleId]);
+
+            if (!$article) {
+                return new Response(Response::HTTP_NOT_FOUND);
+            }
+
+            $data = [
+                'id' => $article->getId(),
+                'title' => $article->getArticleTitle(),
+                'description' => $article->getArticleDescription(),
+                'selling_price' => $article->getSellingPrice(),
+                'pictures' => $article->getArticlePictures(),
+                'colors' => $articleRepository->getArticleColors($article->getId()),
+                'sizes_stock' => $articleRepository->getArticleSizesWithStock($article->getId()),
+                'category' => $articleRepository->getArticleCategory($article->getId())
+            ];
+
+            return new JsonResponse(data: $data, status: Response::HTTP_OK);
+
+        } catch (Exception $exception) {
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $data = [
-            'id' => $article->getId(),
-            'title' => $article->getArticleTitle(),
-            'description'=>$article->getArticleDescription(),
-            'selling_price' => $article->getSellingPrice(),
-            'pictures' => $article->getArticlePictures(),
-            'colors' => $articleRepository->getArticleColors($article->getId()),
-            'sizes_stock' => $articleRepository->getArticleSizesWithStock($article->getId()),
-            'category' => $articleRepository->getArticleCategory($article->getId())
-        ];
-
-        return new JsonResponse(data:$data, status:Response::HTTP_OK);
     }
 
     #[Route('/api/articles/stock/{articleId}', name: 'app_post_stocks', methods: ["POST"])]
-    public function postArticleStock(string $articleId, Request $request, ArticleRepository $articleRepository, SizesRepository $sizesRepository)
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function postArticleStock(string $articleId, Request $request, ArticleRepository $articleRepository, SizesRepository $sizesRepository): Response
     {
-        $article = $articleRepository->findOneBy(["id"=>$articleId]);
+        try {
+            $article = $articleRepository->findOneBy(["id" => $articleId]);
 
-        if(!$article){
-            return new Response(Response::HTTP_BAD_REQUEST);
+            if (!$article) {
+                return new Response(Response::HTTP_BAD_REQUEST);
+            }
+
+            $jsonrequest = json_decode($request->getContent());
+
+            foreach ($jsonrequest->listStocksToAdd as $itemToAdd) {
+                $jsonItem = json_decode($itemToAdd);
+                $sizeId = $jsonItem->sizeId;
+                $amount = $jsonItem->amount;
+
+                $size = $sizesRepository->findOneBy(["id" => $sizeId]);
+
+                $stockEntry = new Stock();
+                $stockEntry->setSize($size);
+                $stockEntry->setAmount($amount);
+                $stockEntry->setArticle($article);
+
+            }
+
+            $article = $articleRepository->find($articleId);
+
+            if (!$article) {
+                return new Response(Response::HTTP_NOT_FOUND);
+            }
+
+            $data = [
+                'id' => $article->getId(),
+                'title' => $article->getArticleTitle(),
+                'description' => $article->getArticleDescription(),
+                'selling_price' => $article->getSellingPrice(),
+                'pictures' => $article->getArticlePictures(),
+                'colors' => $articleRepository->getArticleColors($article->getId()),
+                'sizes_stock' => $articleRepository->getArticleSizesWithStock($article->getId()),
+                'category' => $articleRepository->getArticleCategory($article->getId())
+            ];
+
+            return new JsonResponse($data, status: Response::HTTP_OK);
+        } catch (Exception $exception) {
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $jsonrequest = json_decode($request->getContent());
-
-        foreach ($jsonrequest->content as $itemToAdd){
-            $jsonItem = json_decode($itemToAdd);
-            $sizeId = $jsonItem->sizeId;
-            $amount = $jsonItem->amount;
-
-            $size = $sizesRepository->findOneBy(["id"=>$sizeId]);
-
-            $stockEntry = new Stock();
-            $stockEntry->setSize($size);
-            $stockEntry->setAmount($amount);
-            $stockEntry->addArticle($article);
-
-        }
-
-        return new JsonResponse($jsonrequest, status:Response::HTTP_OK);
     }
+
+
+
+
+
+
 
 
 
@@ -240,37 +389,5 @@ class ArticleController extends AbstractController
         }
     }
 
-    #[Route('/api/articles/{id}', name: 'app_get_single_product')]
-    public function getSingleProduct(int $id, ArticleRepository $articleRepository, ArticlePictureRepository $articlePictureRepository, ColorRepository $colorRepository): Response
-    {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "GET") {
-            $article = $articleRepository->find($id);
 
-            $id = $article->getId();
-            $title = $article->getArticleTitle();
-            $description = $article->getArticleDescription();
-            $selling_price = $article->getSellingPrice();
-            $pictures = $articleRepository->getArticlePictures($id);
-            $color = $articleRepository->getArticleColors($id);
-            $sizes = $articleRepository->getAvailableArticleSizes($id);
-            $category = $articleRepository->getArticleCategory($id);
-
-
-            $response = [
-                'id' => $id,
-                'title' => $title,
-                'description' => $description,
-                'selling_price' => $selling_price,
-                'pictures' => $pictures,
-                'color' => $color,
-                'sizes' => $sizes,
-                'category' => $category
-            ];
-
-            return new JsonResponse($response);
-        } else {
-            return new Response('Wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
-        }
-    }
 }

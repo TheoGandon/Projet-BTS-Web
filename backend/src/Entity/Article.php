@@ -29,9 +29,6 @@ class Article
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
     private ?string $selling_price = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
-    private ?string $selling_price_promo = null;
-
     #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'articles')]
     private Collection $orders;
 
@@ -103,18 +100,6 @@ class Article
     public function setSellingPrice(string $selling_price): static
     {
         $this->selling_price = $selling_price;
-
-        return $this;
-    }
-
-    public function getSellingPricePromo(): ?string
-    {
-        return $this->selling_price_promo;
-    }
-
-    public function setSellingPricePromo(string $selling_price_promo): static
-    {
-        $this->selling_price_promo = $selling_price_promo;
 
         return $this;
     }
