@@ -273,7 +273,7 @@ class ArticleController extends AbstractController
 
     #[Route('/api/articles/stock/{articleId}/{stockId}', name: 'app_patch_stocks', methods: ["PATCH"])]
     #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
-    public function patchArticleStock(int $articleId, int $stockId, Request $request, ArticleRepository $articleRepository,< )
+    public function patchArticleStock(int $articleId, int $stockId, Request $request, ArticleRepository $articleRepository)
     {
 
     }

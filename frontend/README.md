@@ -1,70 +1,35 @@
-# Getting Started with Create React App
+# ZEYNEL ECOM
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+C'est un simple projet react pour un site e-commerce réalisé en ReactJS
 
-## Available Scripts
+## GET STARTED
 
-In the project directory, you can run:
+Afin d'installer les dépendances : 
+`npm install`
+
+## SCRIPTS DISPONIBLES
+
+Ce projet utilise une API publique, sur laquelle les gens font souvent de la merde avec les produits, c'est pourquoi je vous fournis 2 scripts : 
+  - Un pour clear la base produits : `npm run deleteapi`
+  - Un pour ajouter dans la base produits des trucs à peu près normaux : `npm run createapi`
+(Prenez le temps de le faire sinon ça va être dégeulasse)
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Pour lancer l'application sur un serveur de développement
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### `npm build`
 
-### `npm test`
+Pour build l'application (optimisation, mise en production)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## INFORMATIONS SUPPLEMENTAIRES
 
-### `npm run build`
+Vous pouvez vous logger avec les identifiants suivants : 
+  - email: `john@mail.com`
+  - password: `changeme`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+La doc swagger de l'api est disponible à l'adresse suivante : 
+  - [Swagger](https://api.escuelajs.co/docs)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+La doc écrite de l'app est disponible à l'adresse suivante : 
+  - [Documentation](https://fakeapi.platzi.com/en/about/introduction/)
