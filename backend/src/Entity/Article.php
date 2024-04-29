@@ -29,12 +29,6 @@ class Article
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
     private ?string $selling_price = null;
 
-    #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'articles')]
-    private Collection $orders;
-
-    #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'favourite_articles')]
-    private Collection $clients_favourites;
-
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticlePicture::class)]
     private Collection $articlePictures;
 
@@ -45,8 +39,6 @@ class Article
 
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
-        $this->clients_favourites = new ArrayCollection();
         $this->articlePictures = new ArrayCollection();
         $this->stocks = new ArrayCollection();
     }
@@ -100,54 +92,6 @@ class Article
     public function setSellingPrice(string $selling_price): static
     {
         $this->selling_price = $selling_price;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): static
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-        }
-
-        return $this;
-    }
-
-    public function removeOrder(Order $order): static
-    {
-        $this->orders->removeElement($order);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Client>
-     */
-    public function getClientsFavourites(): Collection
-    {
-        return $this->clients_favourites;
-    }
-
-    public function addClientsFavourites(Client $clientsFavourites): static
-    {
-        if (!$this->clients_favourites->contains($clientsFavourites)) {
-            $this->clients_favourites->add($clientsFavourites);
-        }
-
-        return $this;
-    }
-
-    public function removeClientsFavourites(Client $clientsFavourites): static
-    {
-        $this->clients_favourites->removeElement($clientsFavourites);
 
         return $this;
     }

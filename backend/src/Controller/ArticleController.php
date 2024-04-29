@@ -9,6 +9,7 @@ use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ColorRepository;
 use App\Repository\SizesRepository;
+use App\Repository\StockRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -26,24 +27,30 @@ class ArticleController extends AbstractController
     private function getArticleInfos($article, $articleRepository): array
     {
         $id = $article->getId();
-        $title = $article->getArticleTitle();
-        $description = $article->getArticleDescription();
-        $selling_price = $article->getSellingPrice();
-        $pictures = $articleRepository->getArticlePictures($id);
-        $color = $articleRepository->getArticleColors($id);
-        $sizes = $articleRepository->getAvailableArticleSizes($id);
-        $category = $articleRepository->getArticleCategory($id);
-
 
         return [
             'id' => $id,
-            'title' => $title,
-            'description' => $description,
-            'selling_price' => $selling_price,
-            'pictures' => $pictures,
-            'color' => $color,
-            'sizes' => $sizes,
-            'category' => $category
+            'title' => $article->getArticleTitle(),
+            'description' => $article->getArticleDescription(),
+            'selling_price' => $article->getSellingPrice(),
+            'pictures' => $articleRepository->getArticlePictures($id),
+            'color' => $articleRepository->getArticleColors($id),
+            'sizes' => $articleRepository->getAvailableArticleSizes($id),
+            'category' => $articleRepository->getArticleCategory($id)
+        ];
+    }
+
+    private function getFullArticleInfos($article, $articleRepository): array
+    {
+        return [
+            'id' => $article->getId(),
+            'title' => $article->getArticleTitle(),
+            'description' => $article->getArticleDescription(),
+            'selling_price' => $article->getSellingPrice(),
+            'pictures' => $article->getArticlePictures(),
+            'colors' => $articleRepository->getArticleColors($article->getId()),
+            'sizes_stock' => $articleRepository->getArticleSizesWithStock($article->getId()),
+            'category' => $articleRepository->getArticleCategory($article->getId())
         ];
     }
 
@@ -194,32 +201,18 @@ class ArticleController extends AbstractController
         }
     }
 
-
-
-
     #[Route('/api/articles/stock/{articleId}', name: 'app_get_article_with_stocks', methods: ["GET"])]
     #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
     public function getArticleStock(string $articleId, ArticleRepository $articleRepository, ): Response
     {
         try {
-            $article = $articleRepository->findOneBy(["id" => $articleId]);
+            $article = $articleRepository->find($articleId);
 
             if (!$article) {
                 return new Response(Response::HTTP_NOT_FOUND);
             }
 
-            $data = [
-                'id' => $article->getId(),
-                'title' => $article->getArticleTitle(),
-                'description' => $article->getArticleDescription(),
-                'selling_price' => $article->getSellingPrice(),
-                'pictures' => $article->getArticlePictures(),
-                'colors' => $articleRepository->getArticleColors($article->getId()),
-                'sizes_stock' => $articleRepository->getArticleSizesWithStock($article->getId()),
-                'category' => $articleRepository->getArticleCategory($article->getId())
-            ];
-
-            return new JsonResponse(data: $data, status: Response::HTTP_OK);
+            return new JsonResponse(data: $this->getFullArticleInfos($article, $articleRepository), status: Response::HTTP_OK);
 
         } catch (Exception $exception) {
             return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -276,6 +269,34 @@ class ArticleController extends AbstractController
             return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    #[Route('/api/articles/stock/{articleId}/{stockId}', name: 'app_patch_stocks', methods: ["PATCH"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function patchArticleStock(int $articleId, int $stockId, Request $request, ArticleRepository $articleRepository,< )
+    {
+
+    }
+
+    #[Route('/api/articles/stock/{articleId}/{stockId}', name: 'app_delete_stocks', methods: ["DELETE"])]
+    #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
+    public function deleteArticleStock(int $articleId, int $stockId, EntityManagerInterface $manager, ArticleRepository $articleRepository, StockRepository $stockRepository):Response
+    {
+        try{
+            $stock = $stockRepository->find($stockId);
+            $article = $articleRepository->find($articleId);
+
+            if($stock->getArticle()->getId() == $article->getId()){
+                $manager->remove($stock);
+                $manager->flush();
+
+                return new Response(content: "Deleted.", status: Response::HTTP_OK);
+            } else {
+                return new Response(content: "stockId is not a stock of articleId", status: Response::HTTP_BAD_REQUEST);
+            }
+        } catch (\Exception $exception){
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
 

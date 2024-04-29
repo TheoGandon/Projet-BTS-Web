@@ -38,14 +38,14 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'client_id', targetEntity: Order::class)]
     private Collection $orders;
 
-    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'clients_favourites')]
-    private Collection $favourite_articles;
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Cart::class, orphanRemoval: true)]
+    private Collection $carts;
 
     public function __construct()
     {
         $this->adresses = new ArrayCollection();
         $this->orders = new ArrayCollection();
-        $this->favourite_articles = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,7 +153,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->adresses->contains($Adress)) {
             $this->adresses->add($Adress);
-            $Adress->setClientId($this);
+            $Adress->setClient($this);
         }
 
         return $this;
@@ -163,8 +163,8 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->adresses->removeElement($Adress)) {
             // set the owning side to null (unless already changed)
-            if ($Adress->getClientId() === $this) {
-                $Adress->setClientId(null);
+            if ($Adress->getClient() === $this) {
+                $Adress->setClient(null);
             }
         }
 
@@ -202,30 +202,32 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Article>
+     * @return Collection<int, Cart>
      */
-    public function getFavouriteArticles(): Collection
+    public function getCarts(): Collection
     {
-        return $this->favourite_articles;
+        return $this->carts;
     }
 
-    public function addFavouriteArticle(Article $favouriteArticle): static
+    public function addCart(Cart $cart): static
     {
-        if (!$this->favourite_articles->contains($favouriteArticle)) {
-            $this->favourite_articles->add($favouriteArticle);
-            $favouriteArticle->addClientsFavourites($this);
+        if (!$this->carts->contains($cart)) {
+            $this->carts->add($cart);
+            $cart->setClient($this);
         }
 
         return $this;
     }
 
-    public function removeFavouriteArticle(Article $favouriteArticle): static
+    public function removeCart(Cart $cart): static
     {
-        if ($this->favourite_articles->removeElement($favouriteArticle)) {
-            $favouriteArticle->removeClientsFavourites($this);
+        if ($this->carts->removeElement($cart)) {
+            // set the owning side to null (unless already changed)
+            if ($cart->getClient() === $this) {
+                $cart->setClient(null);
+            }
         }
 
         return $this;
     }
-
 }
