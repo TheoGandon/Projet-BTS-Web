@@ -10,6 +10,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\ColorRepository;
 use App\Repository\SizesRepository;
 use App\Repository\StockRepository;
+use ContainerXxf60Ix\getDebug_ArgumentResolver_RequestAttributeService;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -69,23 +70,8 @@ class ArticleController extends AbstractController
 
             foreach ($articles as $article) {
 
-                $id = $article->getId();
-                $title = $article->getArticleTitle();
-                $selling_price = $article->getSellingPrice();
-                $pictures = $articleRepository->getArticlePictures($id);
-                $colors = $articleRepository->getArticleColors($id);
-                $sizes = $articleRepository->getAvailableArticleSizes($id);
-                $category = $articleRepository->getArticleCategory($id);
-
-                $data[] = [
-                    'id' => $id,
-                    'title' => $title,
-                    'selling_price' => $selling_price,
-                    'pictures' => $pictures,
-                    'colors' => $colors,
-                    'available_sizes' => $sizes,
-                    'category' => $category
-                ];
+                $data[] = $this->getArticleInfos($article, $articleRepository);
+                
             }
 
             return new JsonResponse($data);
@@ -238,7 +224,7 @@ class ArticleController extends AbstractController
                 $sizeId = $jsonItem->sizeId;
                 $amount = $jsonItem->amount;
 
-                $size = $sizesRepository->findOneBy(["id" => $sizeId]);
+                $size = $sizesRepository->find($sizeId);
 
                 $stockEntry = new Stock();
                 $stockEntry->setSize($size);
@@ -273,9 +259,48 @@ class ArticleController extends AbstractController
 
     #[Route('/api/articles/stock/{articleId}/{stockId}', name: 'app_patch_stocks', methods: ["PATCH"])]
     #[IsGranted("ROLE_ADMIN", message: "You are not allowed to access this ressource")]
-    public function patchArticleStock(int $articleId, int $stockId, Request $request, ArticleRepository $articleRepository)
+    public function patchArticleStock(int $articleId, int $stockId, Request $request, EntityManagerInterface $manager, ArticleRepository $articleRepository, StockRepository $stockRepository, SizesRepository $sizesRepository):Response
     {
+        try {
+            $article = $articleRepository->find($articleId);
 
+            if (!$article) {
+                return new Response(content: "Article not found", status: Response::HTTP_NOT_FOUND);
+            }
+
+            $stock = $stockRepository->find($stockId);
+
+            if(!$stock){
+                return new Response(content: "Stock not found", status: Response::HTTP_NOT_FOUND);
+            }
+
+            if($stock->getArticle()->getId() == $article->getId()){
+
+                $jsonContent = json_decode($request->getContent());
+
+                if(isset($jsonContent->amount)){
+                    $stock->setAmount($jsonContent->amount);
+                }
+
+                if(isset($jsonContent->sizeId)){
+                    $size = $sizesRepository->find($jsonContent->sizeId);
+                    if(!$size){
+                        return new Response(content: "Size not found", status: Response::HTTP_NOT_FOUND);
+                    }
+                    $stock->setSize($size);
+                }
+
+                $manager->persist($stock);
+                $manager->flush();
+
+                return new JsonResponse(data: $this->getFullArticleInfos($article, $articleRepository), status: Response::HTTP_OK);
+            } else {
+                return new Response(content: "stockId is not a stock of articleId", status: Response::HTTP_BAD_REQUEST);
+            }
+
+        } catch (\Exception $exception){
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/api/articles/stock/{articleId}/{stockId}', name: 'app_delete_stocks', methods: ["DELETE"])]
@@ -298,9 +323,6 @@ class ArticleController extends AbstractController
             return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
 
 
 
