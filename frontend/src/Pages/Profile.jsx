@@ -1,6 +1,6 @@
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import JWTContext from "../JWTContext";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import ProfileCard from "../Components/ProfileCard";
@@ -8,35 +8,36 @@ import UpdatedProfileCard from "../Components/ProfileCardUpdate";
 import Loading from "../Components/LoadingScreen";
 
 export default function Profile() {
-    const {jwt, checkToken} = useContext(JWTContext);
+    const { jwt, checkToken } = useContext(JWTContext);
     const [userData, setUserData] = useState(null);
     const [isUpdated, setIsUpdated] = useState(false);
     const navigate = useNavigate();
 
-    checkToken();
+    useEffect(() => {
+        checkToken();
+    }, [checkToken]);
 
     useEffect(() => {
-        function fetchUserData() {
+        const fetchUserData = () => {
             axios.get('http://localhost:8080/api/client', {
                 headers: {
                     Authorization: `Bearer ${jwt}`
                 }
             })
-            .then(response => response.data)
-            .then(data => {
-                setUserData(data);
+            .then(response => {
+                setUserData(response.data);
             })
             .catch(() => {
-                console.log('Erreur dans le fetchUserData');
-            })
-        }
+                navigate('/login');
+            });
+        };
 
-        if (jwt !== "") {
+        if (jwt) {
             fetchUserData();
         } else {
-            navigate('/login')
+            navigate('/login');
         }
-    }, [jwt, navigate])
+    }, [jwt, navigate]);
 
     const updateUserData = (updatedData) => {
         axios.patch('http://localhost:8080/api/client', updatedData, {
@@ -44,20 +45,26 @@ export default function Profile() {
                 Authorization: `Bearer ${jwt}`
             }
         })
-        .then(response => response.data)
-        .then(data => {
-           setUserData(data);
-           setIsUpdated(true);
+        .then(response => {
+            setUserData(response.data);
+            setIsUpdated(false);
         })
         .catch(() => {
             console.log('Erreur dans le updateUserData');
-        })
-    }
+        });
+    };
 
     return (
         <div className="w-full min-h-hero flex justify-center items-center">
-            {userData === null ? <Loading /> : 
-            (isUpdated ? <UpdatedProfileCard userData={userData} onUpdate={updateUserData} setIsUpdated={setIsUpdated}/> : <ProfileCard userData={userData} onUpdate={updateUserData}/>)}
+            {userData === null ? (
+                <Loading />
+            ) : (
+                isUpdated ? (
+                    <UpdatedProfileCard userData={userData} onUpdate={updateUserData} setIsUpdated={setIsUpdated} />
+                ) : (
+                    <ProfileCard userData={userData} setIsUpdated={setIsUpdated} />
+                )
+            )}
         </div>
-    )
+    );
 }
