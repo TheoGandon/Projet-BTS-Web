@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import DetailsProductCard from "../Components/DetailsProductCard.";
 import React, {useState, useEffect, useContext} from "react";
 import JWTContext from "../JWTContext";
+import Loading from "../Components/LoadingScreen";
 
 
 export default function P(){
@@ -28,7 +29,7 @@ export default function P(){
 
     return(
         <div className="min-h-hero flex flex-wrap justify-center items-center">
-            {item === undefined ? <p>Chargement...</p> : <DetailsProductCard data={item}/> }
+            {item === undefined ? <Loading /> : <DetailsProductCard data={item}/> }
         </div>
     )
 }
