@@ -71,7 +71,7 @@ class ArticleController extends AbstractController
             foreach ($articles as $article) {
 
                 $data[] = $this->getArticleInfos($article, $articleRepository);
-                
+
             }
 
             return new JsonResponse($data);
@@ -323,6 +323,18 @@ class ArticleController extends AbstractController
             return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+   /* #[Route('/api/articles/filter/color/{color_id}', name: 'app_get_products_by_color', methods: ["GET"])]
+    public function getProductsByColor(int $color_id, ArticleRepository $articleRepository): Response
+    {
+        try {
+           $article = $articleRepository->findArticlesByColor($color_id);
+
+        } catch (\Exception $exception) {
+            return new Response(content: $exception, status: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }*/
+
 
 
 

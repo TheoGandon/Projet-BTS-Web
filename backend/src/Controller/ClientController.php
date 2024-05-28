@@ -17,29 +17,89 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ClientController extends AbstractController
 {
-    #[Route('/api/getinfos', name: 'app_get_client_infos')]
-    public function getClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
+    #[Route('/api/client', name: 'app_get_client', methods: ['GET'])]
+    public function getClient(Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository): Response
     {
-        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
-        $clientEmail = $decodedJwtToken["email"];
-        $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-        $id = $client->getId();
-        $first_name = $client->getFirstName();
-        $last_name = $client->getLastName();
-        $email = $client->getEmail();
-        $password = $client->getPassword();
+        try {
+            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+            $clientEmail = $decodedJwtToken["email"];
+            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
 
-        $clientInfos = [
-            'id' => $id,
-            "first_name" => $first_name,
-            "last_name" => $last_name,
-            'email' => $email,
-            'password' => $password
-        ];
+            $clientAdresses = $client->getAdresses();
+            $addresses = [];
 
-        return new JsonResponse($clientInfos);
+            foreach ($clientAdresses as $address) {
+                $addresses[] = [
+                    'id' => $address->getId(),
+                    'street' => $address->getAddressStreet(),
+                    'street2' => $address->getAddressStreet2(),
+                    'postalcode' => $address->getAddressPostalCode(),
+                    'city' => $address->getAddressCity(),
+                    'country' => $address->getAddressCountry(),
+                    'phonenr' => $address->getAddressPhoneNumber()
+                ];
+            }
 
+            $clientArray = [
+                'id' => $client->getId(),
+                'first_name' => $client->getFirstName(),
+                'last_name' => $client->getLastName(),
+                'email' => $client->getEmail(),
+                'addresses' => $addresses
+            ];
+            return new JsonResponse($clientArray);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
+    #[Route('/api/client', name: 'app_edit_client', methods: ['PATCH'])]
+    function editClient(Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository, EntityManagerInterface $manager): Response
+    {
+        try {
+            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+            $clientEmail = $decodedJwtToken["email"];
+            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            $parameters = json_decode($request->getContent(), true);
+
+            if(!empty($parameters['first_name'])){
+                $client->setFirstName($parameters['first_name']);
+            }
+
+            if(!empty($parameters['last_name'])){
+                $client->setLastName($parameters['last_name']);
+            }
+
+            if(!empty($parameters['email'])){
+                $client->setEmail($parameters['email']);
+            }
+
+            if(!empty($parameters['password'])){
+                $client->setPassword($parameters['password']);
+            }
+
+            $manager->persist($client);
+            $manager->flush();
+
+            return new Response('Client updated', Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
     #[Route('/api/editinfos', name: 'app_edit_client_infos')]
     public function editClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, Request $request): Response
