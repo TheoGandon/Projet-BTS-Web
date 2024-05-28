@@ -45,4 +45,21 @@ class StockRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function getTotalStockValue(): float
+    {
+        return $this->createQueryBuilder('s')
+            ->select('SUM(s.amount * article.selling_price) as total_stock_value')
+            ->join('s.Article', 'article')
+            ->getQuery()
+            ->getResult()[0]['total_stock_value'];
+    }
+
+    public function getTotalStockQuantity(): int
+    {
+        return $this->createQueryBuilder('s')
+            ->select('SUM(s.amount) as total_stock_quantity')
+            ->getQuery()
+            ->getResult()[0]['total_stock_quantity'];
+    }
 }
