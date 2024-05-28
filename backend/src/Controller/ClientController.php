@@ -100,48 +100,27 @@ class ClientController extends AbstractController
     }
 
 
-
-    #[Route('/api/editinfos', name: 'app_edit_client_infos')]
-    public function editClientInfos(ClientRepository $clientRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, Request $request): Response
+    #[Route('/api/client/adresses', name:"app_get_client_adresses", methods: ['GET'])]
+    public function getClientAdresses(Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository): Response
     {
-        if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+        try {
             $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
             $clientEmail = $decodedJwtToken["email"];
             $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-            $id = $client->getId();
 
-            $parameters = json_decode($request->getContent(), true);
-            $emailInput = filter_var($parameters["email_update"], FILTER_SANITIZE_EMAIL);
-
-            if ($emailInput != false) {
-                $exec = $clientRepository->updateClientFields($id, $parameters["first_name_update"], $parameters["last_name_update"], $emailInput, password_hash($parameters["password_update"], PASSWORD_BCRYPT));
-                if ($exec) {
-                    return new Response("ok", Response::HTTP_OK);
-                } else {
-                    return new Response('sql error', Response::HTTP_BAD_REQUEST);
-                }
-            } else {
-                return new Response('email not valid', Response::HTTP_BAD_REQUEST);
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
             }
-        } else {
-            return new Response('wrong method', Response::HTTP_METHOD_NOT_ALLOWED);
-        }
-    }
 
-    #[Route('/api/get_addresses', name: 'app_get_address')]
-    public function getAddresses(ClientRepository $clientRepository, AddressRepository $addressRepository, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
-    {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "GET") {
-            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
-            $clientEmail = $decodedJwtToken["email"];
-            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-            $id = $client->getId();
+            $clientAdresses = $client->getAdresses();
 
-            $addresses_id = $clientRepository->findAddresses($id);
+            if(count($clientAdresses) == 0){
+                return new JsonResponse([], Response::HTTP_NO_CONTENT);
+            }
+
             $addresses = [];
-            foreach ($addresses_id as $address_id) {
-                $address = $addressRepository->find($address_id['id']);
+
+            foreach ($clientAdresses as $address) {
                 $addresses[] = [
                     'id' => $address->getId(),
                     'street' => $address->getAddressStreet(),
@@ -152,65 +131,181 @@ class ClientController extends AbstractController
                     'phonenr' => $address->getAddressPhoneNumber()
                 ];
             }
-            if (count($addresses) > 0) {
-                return new JsonResponse($addresses);
-            } else {
-                return new Response('User has no addresses', Response::HTTP_BAD_REQUEST);
-            }
-        } else {
-            return new Response('Method Not Allowed', Response::HTTP_METHOD_NOT_ALLOWED);
+
+            return new JsonResponse($addresses);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    #[Route('/api/add_address', name: 'add_address')]
-    public function addAddress(ClientRepository $clientRepository, Request $request, EntityManagerInterface $manager, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
+    #[Route('/api/client/adresses', name:"app_add_client_adresses", methods: ['POST'])]
+    public function addClientAdresses(Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository, EntityManagerInterface $manager): Response
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method == "POST") {
+        try {
             $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
             $clientEmail = $decodedJwtToken["email"];
             $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-            $id = $client->getId();
+
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
 
             $parameters = json_decode($request->getContent(), true);
 
             $address = new Address();
-            $address->setClient($clientRepository->find($id));
-            $address->setAddressStreet($parameters["address1"]);
-            if (isset($parameters["address2"])) {
-                $address->setAddressStreet2($parameters["address2"]);
-            }
-            $address->setAddressPostalCode($parameters["postcode"]);
+            $address->setClient($client);
+            $address->setAddressStreet($parameters["street"]);
+            $address->setAddressStreet2($parameters["street2"]);
+            $address->setAddressPostalCode($parameters["postalcode"]);
             $address->setAddressCity($parameters["city"]);
             $address->setAddressCountry($parameters["country"]);
-            $address->setAddressPhoneNumber($parameters["phonenumber"]);
+            $address->setAddressPhoneNumber($parameters["phonenr"]);
 
             $manager->persist($address);
             $manager->flush();
 
-            return new Response('Address added successfully', Response::HTTP_OK);
-        } else {
-            return new Response('Incorrect Method', Response::HTTP_METHOD_NOT_ALLOWED);
+            return new Response('Address added', Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    #[Route('/api/remove_address/{address_id}', name: 'app_remove_address', methods: ["DELETE"])]
-    public function removeAddress(string $address_id, ClientRepository $clientRepository, AddressRepository $addressRepository, Request $request, EntityManagerInterface $manager, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager): Response
+
+    #[Route('/api/client/adresses/{addressId}', name:"app_get_client_adresses_id", methods: ['GET'])]
+    public function getClientAdressesId(int $addressId, Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository, AddressRepository $addressRepository): Response
     {
-        $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
-        $clientEmail = $decodedJwtToken["email"];
-        $client = $clientRepository->findBy(["email" => $clientEmail])[0];
-        $id = $client->getId();
+        try {
+            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+            $clientEmail = $decodedJwtToken["email"];
+            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
 
-        $address = $addressRepository->find($address_id);
-        $address_client_id = $address->getClient()->getId();
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
 
-        if ($address_client_id == $id) {
+            $address = $addressRepository->find($addressId);
+
+            if(!$address){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            if($address->getClient() != $client){
+                return new Response( status: Response::HTTP_FORBIDDEN);
+            }
+
+            $addressArray = [
+                'id' => $address->getId(),
+                'street' => $address->getAddressStreet(),
+                'street2' => $address->getAddressStreet2(),
+                'postalcode' => $address->getAddressPostalCode(),
+                'city' => $address->getAddressCity(),
+                'country' => $address->getAddressCountry(),
+                'phonenr' => $address->getAddressPhoneNumber()
+            ];
+
+            return new JsonResponse($addressArray);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    #[Route('/api/client/adresses/{addressId}', name:"app_edit_client_adresses", methods: ['PATCH'])]
+    public function editClientAdresses(int $addressId, Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository, AddressRepository $addressRepository, EntityManagerInterface $manager): Response
+    {
+        try {
+            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+            $clientEmail = $decodedJwtToken["email"];
+            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
+
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            $address = $addressRepository->find($addressId);
+
+            if(!$address){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            if($address->getClient() != $client){
+                return new Response( status: Response::HTTP_FORBIDDEN);
+            }
+
+            $parameters = json_decode($request->getContent(), true);
+
+            if(!empty($parameters['street'])){
+                $address->setAddressStreet($parameters['street']);
+            }
+
+            if(!empty($parameters['street2'])){
+                $address->setAddressStreet2($parameters['street2']);
+            }
+
+            if(!empty($parameters['postalcode'])){
+                $address->setAddressPostalCode($parameters['postalcode']);
+            }
+
+            if(!empty($parameters['city'])){
+                $address->setAddressCity($parameters['city']);
+            }
+
+            if(!empty($parameters['country'])){
+                $address->setAddressCountry($parameters['country']);
+            }
+
+            if(!empty($parameters['phonenr'])){
+                $address->setAddressPhoneNumber($parameters['phonenr']);
+            }
+
+            $manager->persist($address);
+            $manager->flush();
+
+            return new Response('Address updated', Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    #[Route('/api/client/adresses/{addressId}', name:"app_delete_client_adresses", methods: ['DELETE'])]
+    public function deleteClientAdresses(int $addressId, Request $request, TokenStorageInterface $tokenStorageInterface, JWTTokenManagerInterface $jwtManager, ClientRepository $clientRepository, AddressRepository $addressRepository, EntityManagerInterface $manager): Response
+    {
+        try {
+            $decodedJwtToken = $jwtManager->decode($tokenStorageInterface->getToken());
+            $clientEmail = $decodedJwtToken["email"];
+            $client = $clientRepository->findBy(["email" => $clientEmail])[0];
+
+            if(!$client){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            $address = $addressRepository->find($addressId);
+
+            if(!$address){
+                return new Response( status: Response::HTTP_NOT_FOUND);
+            }
+
+            if($address->getClient() != $client){
+                return new Response( status: Response::HTTP_FORBIDDEN);
+            }
+
             $manager->remove($address);
             $manager->flush();
+
             return new Response('Address deleted', Response::HTTP_OK);
-        } else {
-            return new Response('The address is not an address of the client', Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
