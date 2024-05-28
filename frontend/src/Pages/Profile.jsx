@@ -1,43 +1,43 @@
-import { useContext, useEffect, useState } from "react";
-import JWTContext from "../JWTContext";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import ProfileCard from "../Components/ProfileCard";
 import UpdatedProfileCard from "../Components/ProfileCardUpdate";
 import Loading from "../Components/LoadingScreen";
+import JWTContext from "../JWTContext";
 
 export default function Profile() {
     const { jwt, checkToken } = useContext(JWTContext);
     const [userData, setUserData] = useState(null);
     const [isUpdated, setIsUpdated] = useState(false);
+    const [forceRender, setForceRender] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        checkToken();
-    }, [checkToken]);
+    checkToken();
 
     useEffect(() => {
-        const fetchUserData = () => {
+        function fetchUserData() {
             axios.get('http://localhost:8080/api/client', {
                 headers: {
                     Authorization: `Bearer ${jwt}`
                 }
             })
-            .then(response => {
-                setUserData(response.data);
+            .then(response => response.data)
+            .then(data => {
+                setUserData(data);
             })
             .catch(() => {
-                navigate('/login');
-            });
-        };
+                console.log('Erreur dans le fetchUserData');
+            })
+        }
 
-        if (jwt) {
+        if (jwt !== "") {
             fetchUserData();
         } else {
-            navigate('/login');
+            navigate('/login')
         }
-    }, [jwt, navigate]);
+    }, [jwt, navigate, forceRender]);
 
     const updateUserData = (updatedData) => {
         axios.patch('http://localhost:8080/api/client', updatedData, {
@@ -45,26 +45,22 @@ export default function Profile() {
                 Authorization: `Bearer ${jwt}`
             }
         })
-        .then(response => {
-            setUserData(response.data);
-            setIsUpdated(false);
+        .then(response => response.data)
+        .then(data => {
+            setUserData(data);
+            setIsUpdated(true);
+            setForceRender(prevState => !prevState);
         })
         .catch(() => {
             console.log('Erreur dans le updateUserData');
-        });
-    };
+        })
+    }
 
     return (
         <div className="w-full min-h-hero flex justify-center items-center">
-            {userData === null ? (
-                <Loading />
-            ) : (
-                isUpdated ? (
-                    <UpdatedProfileCard userData={userData} onUpdate={updateUserData} setIsUpdated={setIsUpdated} />
-                ) : (
-                    <ProfileCard userData={userData} setIsUpdated={setIsUpdated} />
-                )
+            {userData === null ? <Loading /> : 
+            (isUpdated ? <UpdatedProfileCard userData={userData} onUpdate={updateUserData} setIsUpdated={setIsUpdated}/> : <ProfileCard userData={userData} onUpdate={updateUserData} setIsUpdated={setIsUpdated} />
             )}
         </div>
-    );
+    )
 }
