@@ -11,7 +11,7 @@ const styles = {
     },
 };
 
-export default function ProfileCard({ userData, setIsUpdated }) {
+export default function ProfileCard({ userData, setIsUpdated, onAddAddress, onDeleteAddress }) {
     const navigate = useNavigate();
     const { setToken } = useContext(JWTContext);
 
@@ -24,6 +24,10 @@ export default function ProfileCard({ userData, setIsUpdated }) {
 
     const handleUpdate = () => {
         setIsUpdated(true);
+    };
+
+    const handleDeleteAddress = (addressId) => {
+        onDeleteAddress(addressId);
     };
 
     if (!userData) {
@@ -49,6 +53,25 @@ export default function ProfileCard({ userData, setIsUpdated }) {
                         <Typography className="text-sm font-medium text-gray-900" htmlFor="id">ID</Typography>
                         <Typography className="text-sm text-gray-500" id="id">{userData.id}</Typography>
                     </div>
+                    {userData.addresses.map((address, index) => (
+                        <Card key={index} variant="outlined" style={{ marginTop: '10px' }}>
+                            <CardContent>
+                                <Typography color="textSecondary" gutterBottom>
+                                    Address {index + 1}
+                                </Typography>
+                                <Typography variant="body2" component="p">
+                                    {address.street}, {address.street2}
+                                </Typography>
+                                <Typography variant="body2" component="p">
+                                    {address.postalcode}, {address.city}, {address.country}
+                                </Typography>
+                                <Typography variant="body2" component="p">
+                                    Phone: {address.phonenr}
+                                </Typography>
+                                <Button onClick={() => handleDeleteAddress(address.id)} style={{ margin: '0 auto', display: 'flex' }}>Supprimer</Button>
+                            </CardContent>
+                        </Card>
+                    ))}
                     <Button variant="contained" className='w-full' onClick={handleUpdate} style={{ ...styles.blackButton }}>Modifier Profile</Button>
                     <Button variant="contained" className='w-full' onClick={handleLogout} style={{ ...styles.blackButton }}>Logout</Button>
                 </div>

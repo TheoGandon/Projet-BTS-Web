@@ -11,24 +11,45 @@ const styles = {
     },
 };
 
-export default function UpdatedProfileCard({ userData, onUpdate, setIsUpdated }) {
+export default function UpdatedProfileCard({ userData, onUpdate, setIsUpdated, onAddAddress }) {
     const navigate = useNavigate();
     const { setToken } = useContext(JWTContext);
     const [updatedData, setUpdatedData] = useState({
         first_name: "",
         last_name: "",
         email: "",
-        password: ""
+        password: "",
+        street: "",
+        street2: "",
+        postalcode: "",
+        city: "",
+        country: "",
+        phonenr: ""
     });
-    const [updateSuccess, setUpdateSuccess] = useState(false); 
+    const [newAddress, setNewAddress] = useState({
+        street: "",
+        street2: "",
+        postalcode: "",
+        city: "",
+        country: "",
+        phonenr: ""
+    });
+    const [updateSuccess, setUpdateSuccess] = useState(false);
 
     useEffect(() => {
         if (userData) {
+            const address = userData.addresses && userData.addresses.length > 0 ? userData.addresses[0] : {};
             setUpdatedData({
                 first_name: userData.first_name,
                 last_name: userData.last_name,
                 email: userData.email,
-                password: ""
+                password: "",
+                street: address.street || "",
+                street2: address.street2 || "",
+                postalcode: address.postalcode || "",
+                city: address.city || "",
+                country: address.country || "",
+                phonenr: address.phonenr || ""
             });
         }
     }, [userData]);
@@ -49,6 +70,25 @@ export default function UpdatedProfileCard({ userData, onUpdate, setIsUpdated })
         setUpdatedData({
             ...updatedData,
             [event.target.name]: event.target.value
+        });
+    };
+
+    const handleAddressChange = (event) => {
+        setNewAddress({
+            ...newAddress,
+            [event.target.name]: event.target.value
+        });
+    };
+
+    const handleAddAddress = () => {
+        onAddAddress(newAddress);
+        setNewAddress({
+            street: "",
+            street2: "",
+            postalcode: "",
+            city: "",
+            country: "",
+            phonenr: ""
         });
     };
 
@@ -74,12 +114,19 @@ export default function UpdatedProfileCard({ userData, onUpdate, setIsUpdated })
                         <TextField label="Password" name="password" type="password" value={updatedData.password} onChange={handleChange} />
                         {updateSuccess && <p style={{ color: 'green' }}>Mise à jour réussie!</p>}
                         <Button variant="contained" className='w-full' onClick={handleUpdate} style={{...styles.submit, ...styles.blackButton}}>Update</Button>
-                        <Button variant="contained" className='w-full' onClick={handleProfile} style={{...styles.submit, ...styles.blackButton}}>Voir Profile</Button>
-                        <Button variant="contained" className='w-full' onClick={handleLogout} style={{...styles.submit, ...styles.blackButton}}>Logout</Button>
+                        <Button variant="contained" className='w-full' onClick={handleProfile} style={{...styles.submit, ...styles.blackButton}}>Voir Profile</Button>                    </div>
+                    <div className="flex flex-col p-5 space-y-3">
+                        <h2 className="text-2xl font-bold">Add New Address</h2>
+                        <TextField label="Street" name="street" value={newAddress.street} onChange={handleAddressChange} />
+                        <TextField label="Street 2" name="street2" value={newAddress.street2} onChange={handleAddressChange} />
+                        <TextField label="Postal Code" name="postalcode" value={newAddress.postalcode} onChange={handleAddressChange} />
+                        <TextField label="City" name="city" value={newAddress.city} onChange={handleAddressChange} />
+                        <TextField label="Country" name="country" value={newAddress.country} onChange={handleAddressChange} />
+                        <TextField label="Phone Number" name="phonenr" value={newAddress.phonenr} onChange={handleAddressChange} />
+                        <Button variant="contained" className='w-full' onClick={handleAddAddress} style={{...styles.submit, ...styles.blackButton}}>Add Address</Button>
                     </div>
                 </CardContent>
             </Card>
         ) : null
     );
 }
-// Path: frontend/src/Components/ProfileCardUpdate.jsx
